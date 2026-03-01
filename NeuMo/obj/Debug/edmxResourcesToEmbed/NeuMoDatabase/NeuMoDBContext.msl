@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="NeuMoModelStoreContainer" CdmEntityContainer="NeuMoEntities">
+    <EntitySetMapping Name="tbl_StorageGrid">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_StorageGrid">
+        <MappingFragment StoreEntitySet="tbl_StorageGrid">
+          <ScalarProperty Name="Company" ColumnName="Company" />
+          <ScalarProperty Name="BoxName" ColumnName="BoxName" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_FrameNumberPattern">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_FrameNumberPattern">
+        <MappingFragment StoreEntitySet="tbl_FrameNumberPattern">
+          <ScalarProperty Name="Pattern" ColumnName="Pattern" />
+          <ScalarProperty Name="BrandDesignation" ColumnName="BrandDesignation" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_BikePlacements">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_BikePlacements">
+        <MappingFragment StoreEntitySet="tbl_BikePlacements">
+          <ScalarProperty Name="Mechaniker" ColumnName="Mechaniker" />
+          <ScalarProperty Name="Barcode" ColumnName="Barcode" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="IsEbike" ColumnName="IsEbike" />
+          <ScalarProperty Name="FrameNumber" ColumnName="FrameNumber" />
+          <ScalarProperty Name="UnPackerID" ColumnName="UnPackerID" />
+          <ScalarProperty Name="KeyNumber" ColumnName="KeyNumber" />
+          <ScalarProperty Name="IsDifficult" ColumnName="IsDifficult" />
+          <ScalarProperty Name="AssembleEndTime" ColumnName="AssembleEndTime" />
+          <ScalarProperty Name="AssembleStartTime" ColumnName="AssembleStartTime" />
+          <ScalarProperty Name="BikeID" ColumnName="BikeID" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="AssemblerID" ColumnName="AssemblerID" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="IsPriority" ColumnName="IsPriority" />
+          <ScalarProperty Name="IsOccupied" ColumnName="IsOccupied" />
+          <ScalarProperty Name="BoxName" ColumnName="BoxName" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_Branches">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_Branches">
+        <MappingFragment StoreEntitySet="tbl_Branches">
+          <ScalarProperty Name="FlowType" ColumnName="FlowType" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="NeuMoModel.Users">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="LabelPrinter" ColumnName="LabelPrinter" />
+          <ScalarProperty Name="BikepassPrinter" ColumnName="BikepassPrinter" />
+          <ScalarProperty Name="EmployeeNumber" ColumnName="EmployeeNumber" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="IsMechanic" ColumnName="IsMechanic" />
+          <ScalarProperty Name="IsUnpacker" ColumnName="IsUnpacker" />
+          <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_Company">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_Company">
+        <MappingFragment StoreEntitySet="tbl_Company">
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_BikePassPrint_Log">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_BikePassPrint_Log">
+        <MappingFragment StoreEntitySet="tbl_BikePassPrint_Log">
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="Brand" ColumnName="Brand" />
+          <ScalarProperty Name="Mechaniker" ColumnName="Mechaniker" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="ForkNumber" ColumnName="ForkNumber" />
+          <ScalarProperty Name="KeyNumber" ColumnName="KeyNumber" />
+          <ScalarProperty Name="BatteryNumber" ColumnName="BatteryNumber" />
+          <ScalarProperty Name="AccesoryBag" ColumnName="AccesoryBag" />
+          <ScalarProperty Name="Monteur" ColumnName="Monteur" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="Frame_Num" ColumnName="Frame_Num" />
+          <ScalarProperty Name="Barcode" ColumnName="Barcode" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vw_NeumoProductDetails">
+      <EntityTypeMapping TypeName="NeuMoModel.vw_NeumoProductDetails">
+        <MappingFragment StoreEntitySet="vw_NeumoProductDetails">
+          <ScalarProperty Name="E_Bike_Engine_Beschreibung" ColumnName="E-Bike Engine Beschreibung" />
+          <ScalarProperty Name="isebike" ColumnName="isebike" />
+          <ScalarProperty Name="EAN" ColumnName="EAN" />
+          <ScalarProperty Name="Bar_Code" ColumnName="Bar Code" />
+          <ScalarProperty Name="Model_Year" ColumnName="Model Year" />
+          <ScalarProperty Name="Unit_Price" ColumnName="Unit Price" />
+          <ScalarProperty Name="Unit_Cost" ColumnName="Unit Cost" />
+          <ScalarProperty Name="Leistung" ColumnName="Leistung" />
+          <ScalarProperty Name="E_Bike_Engine" ColumnName="E-Bike Engine" />
+          <ScalarProperty Name="Blocked" ColumnName="Blocked" />
+          <ScalarProperty Name="Item_Category_Code" ColumnName="Item Category Code" />
+          <ScalarProperty Name="ERFA_No_" ColumnName="ERFA No_" />
+          <ScalarProperty Name="Description_3" ColumnName="Description 3" />
+          <ScalarProperty Name="Description_2" ColumnName="Description 2" />
+          <ScalarProperty Name="Frame_Material" ColumnName="Frame Material" />
+          <ScalarProperty Name="Gearshift" ColumnName="Gearshift" />
+          <ScalarProperty Name="Wheel_Size" ColumnName="Wheel Size" />
+          <ScalarProperty Name="Frame_Type" ColumnName="Frame Type" />
+          <ScalarProperty Name="Frame_Height" ColumnName="Frame Height" />
+          <ScalarProperty Name="ColourForName" ColumnName="ColourForName" />
+          <ScalarProperty Name="Colour" ColumnName="Colour" />
+          <ScalarProperty Name="Brand" ColumnName="Brand" />
+          <ScalarProperty Name="Target_Group" ColumnName="Target Group" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="No_" ColumnName="No_" />
+          <ScalarProperty Name="Company" ColumnName="Company" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_BrandExtension">
+      <EntityTypeMapping TypeName="NeuMoModel.tbl_BrandExtension">
+        <MappingFragment StoreEntitySet="tbl_BrandExtension">
+          <ScalarProperty Name="Picture" ColumnName="Picture" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

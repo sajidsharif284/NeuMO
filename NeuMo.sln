@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuMo", "NeuMo\NeuMo.csproj", "{1148772A-714E-42B8-8812-7C41ECD53BB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1148772A-714E-42B8-8812-7C41ECD53BB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1148772A-714E-42B8-8812-7C41ECD53BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1148772A-714E-42B8-8812-7C41ECD53BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1148772A-714E-42B8-8812-7C41ECD53BB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DDD7F3EC-F482-48BD-A24B-D1A88CBF139A}
+	EndGlobalSection
+EndGlobal

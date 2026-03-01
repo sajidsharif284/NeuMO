@@ -1,0 +1,956 @@
+﻿@model List<NeuMo.Controllers.UnPackingController.StorageSlotViewModel>
+@{
+    ViewBag.Title = "Lagerplätze";
+    Layout = null;
+
+}
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UnPackingAssign</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/gh/AmagiTech/JSLoader/amagiloader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <style>
+    body {
+        background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100vh;
+    }
+    .custom-sidebar {
+        width: 50px;
+        background-color: white;
+        border-radius: 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        height: 80vh;
+        margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-logo {
+        font-weight: bold;
+        font-size: 18px;
+        color: #e1005a;
+        margin-bottom: 1rem;
+    }
+
+    .icon {
+        font-size: 22px;
+        color: #eaa;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+    .unPackerIcon {
+        font-size: 22px;
+        color: red;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+
+    .circle-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fdd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: red;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+    .register-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+
+
+    .logout-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #e1005a;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .parking-container {
+        background-color: white;
+        padding: 50px 12px 50px 12px;
+        margin-top: 5px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 10px;
+        min-height: 75vh;
+    }
+
+
+    .parking-slot {
+        border: 2px solid black;
+        border-radius: 8px;
+        width: 50px;
+        height: 90px;
+        margin: 2px;
+        font-weight: bold;
+        padding: 2px;
+        font-size: 13px;
+        position: relative;
+    }
+
+    .slot-taken {
+        background-color: black;
+        color: white;
+    }
+
+    .priority-slot i {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+    }
+
+    .selected-slot {
+        background-color: #56B8F1;
+        border-color: #198754;
+        font-weight: bold;
+    }
+
+    .secondBox {
+        min-height: 75vh;
+        background-color: #F4F4F4;
+        margin-left: 20px;
+        /*padding: 50px;*/
+        margin-top: 5px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 10px;
+        /* Added flex column for vertical centering */
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .scanner-box {
+        /* Make the box grow and center content vertically & horizontally */
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #scanForm {
+        width: 100%;
+        max-width: 280px; /* controls input max width */
+    }
+
+    input[type="text"], #barcodeInput {
+        width: 100%;
+        height: 70px;
+        padding: 12px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    input::placeholder {
+        font-weight: bold;
+        text-align: center;
+        color: black;
+    }
+
+    #bikeInfoBox {
+        /* Normal block flow aligned from top */
+        background: #F4F4F4;
+        padding: 0px 20px 20px 20px;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+        #bikeInfoBox strong {
+            font-size: 13px;
+        }
+
+    #extraInfo p {
+        font-weight: bold;
+        border-bottom: 1px solid #ccc;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    #extraInfo {
+        height: 200px;
+    }
+
+    .form-check {
+        margin-top: 15px; /* spacing for checkbox */
+    }
+
+    button.btn {
+        margin-top: 15px; /* spacing for button */
+    }
+
+    .assigned-box-style {
+        width: 70px;
+        height: 100px;
+        border: 3px solid #000;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    .error-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: red;
+        color: white;
+        font-size: 18px;
+        padding: 12px 20px;
+        z-index: 9999;
+    }
+
+        .error-banner i {
+            margin-right: 10px;
+            font-size: 22px;
+        }
+
+    #errorText {
+        flex-grow: 1;
+    }
+
+    #errorClose {
+        cursor: pointer;
+        font-weight: bold;
+        padding-left: 15px;
+        font-size: 22px;
+    }
+    #btnWarenausgang
+    {
+        border:2px solid black;
+    }
+    #printButton {
+        border: 2px solid black;
+    }
+        .error-bannerForSendEmail {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: green;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            z-index: 9999;
+        }
+
+            .error-bannerForSendEmail i {
+                margin-right: 10px;
+                font-size: 22px;
+            }
+
+        #errorTextForSendEmail {
+            flex-grow: 1;
+        }
+
+        #errorCloseForSendEmail {
+            cursor: pointer;
+            font-weight: bold;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById("barcodeInput");
+
+            if (input) {
+                input.addEventListener("keypress", function (e) {
+                    if (e.key === "Enter") {
+                        debugger;
+                        e.preventDefault();
+                        let barcode = this.value;
+                        AmagiLoader.show();
+                        fetch('@Url.Action("ScanJson", "UnPacking")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'SerialNo=' + encodeURIComponent(barcode)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                debugger;
+                                AmagiLoader.hide();
+                                if (!data.success) {
+                                    showErrorMessage(data.message); // show backend error
+                                    return;
+                                }
+                                if (data.image) {
+                                    const imageElement = document.getElementById("bikeImage");
+                                    if (imageElement) {
+                                        imageElement.src = data.image;
+                                        imageElement.style.display = "block";
+                                    }
+                                }
+
+                                const bike = data.data; // 👈 unwrap bike data
+
+                                document.getElementById("brand").innerText = bike.Brand;
+                                document.getElementById("model").innerText = bike.Description;
+                                document.getElementById("articleNumber").innerText = bike.Bar_Code;
+                                document.getElementById("ean").innerText = bike.EAN;
+
+                                document.getElementById("kategorie").innerText = bike.Item_Category_Code;
+                                document.getElementById("rahmentyp").innerText = bike.Frame_Type;
+                                document.getElementById("rahmenmaterial").innerText = bike.Frame_Material;
+                                document.getElementById("schaltung").innerText = bike.Gearshift;
+                                document.getElementById("radgroesse").innerText = bike.Wheel_Size;
+                                document.getElementById("rahmenhoehe").innerText = bike.Frame_Height;
+                                document.getElementById("farbe").innerText = bike.ColourForName;
+
+                                document.getElementById("EbikeCheckbox").checked = bike.isebike === true;
+
+                                document.getElementById("getBarcodeFromAPI").value = bike.Bar_Code;
+                                document.getElementById("bikeBrand").value = bike.Brand;
+
+
+                                if (bike.E_Bike_Engine && bike.E_Bike_Engine.trim() !== "") {
+                                    document.getElementById("akku").innerText = bike.E_Bike_Engine;
+                                }
+                                else
+                                {
+                                    document.getElementById("akkuHead").style.display = "none";
+                                }
+
+                                document.getElementById("bikeInfoBox").style.display = "block";
+                                document.getElementById("ScannedBox").style.display = "none";
+                            })
+                            .catch(error => {
+                                AmagiLoader.hide();
+                                showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+
+                            });
+                    }
+                });
+            } else {
+                console.error("barcodeInput element not found in the DOM.");
+            }
+        });
+
+
+
+        function handleWeiterClick() {
+            const btn = event.target;
+            btn.disabled = true;
+            const barcode = document.getElementById("barcodeInput").value;
+            const getBarcodeFromAPI = document.getElementById("getBarcodeFromAPI").value;
+            const rahmenNumber = document.getElementById("Rahmennummer").value;
+            const isPriority = document.getElementById("priorityCheckbox").checked;
+            const isEbike = document.getElementById("EbikeCheckbox").checked;
+    if (!barcode) {
+        alert("Bitte Barcode eingeben.");
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("AssignBikeSlot", "UnPacking")',
+        type: 'POST',
+        data: {
+            SerialNo: barcode,
+            barcode: getBarcodeFromAPI,
+            isPriority: isPriority,
+            isEbike: isEbike,
+            rahmenNumber: rahmenNumber,
+        },
+        success: function (response) {
+            if (!response.success) {
+                // If no slot is available, show alert and reload
+                showErrorMessage(response.message); // show backend error
+                //location.reload();
+                return;
+            }
+
+            // Hide scan box and info box
+            document.getElementById("ScannedBox").style.display = "none";
+            document.getElementById("bikeInfoBox").style.display = "none";
+
+            // Update and show assigned box panel
+            const assignedPanel = document.getElementById("assigned-box-panel");
+            const assignedBox = document.getElementById("assigned-box");
+
+            assignedBox.textContent = response.assignedBox;
+            assignedPanel.style.display = "block";
+
+            // Optional: highlight the assigned box in UI
+            document.querySelectorAll('.parking-slot').forEach(el => {
+                if (el.textContent.trim() === response.assignedBox) {
+                    el.classList.add('selected-slot');
+                } else {
+                    el.style.opacity = '0.2'; // visually dim others
+                }
+            });
+
+
+        },
+        error: function () {
+            alert("Fehler beim Zuweisen des Lagerplatzes.");
+        }
+    });
+        }
+
+        function handleWeiterClickUnpackingWithFrameNumber() {
+            const btn = event.target;
+            btn.disabled = true;
+            const barcode = document.getElementById("barcodeInput").value;
+            const getBarcodeFromAPI = document.getElementById("getBarcodeFromAPI").value;
+        const rahmenNumber = document.getElementById("Rahmennummer").value;
+        const isPriority = document.getElementById("priorityCheckbox").checked;
+        const isEbike = document.getElementById("EbikeCheckbox").checked;
+if (!barcode) {
+    alert("Bitte Barcode eingeben.");
+    return;
+}
+
+$.ajax({
+    url: '@Url.Action("UnpackingWithFrameNumber", "UnPacking")',
+    type: 'POST',
+    data: {
+        SerialNo: barcode,
+        barcode: getBarcodeFromAPI,
+        isPriority: isPriority,
+        isEbike: isEbike,
+        rahmenNumber: rahmenNumber,
+    },
+    success: function (response) {
+        if (!response.success) {
+            // If no slot is available, show alert and reload
+            showErrorMessage(response.message); // show backend error
+            //location.reload();
+            return;
+        }
+
+        // Hide scan box and info box
+        document.getElementById("ScannedBox").style.display = "none";
+        document.getElementById("shelfBox").style.display = "none";
+        document.getElementById("bikeInfoBox").style.display = "none";
+
+        // Update and show assigned box panel
+        const assignedPanel = document.getElementById("assigned-box-panel-unpackwithframe");
+
+        assignedPanel.style.display = "block";
+
+        // Optional: highlight the assigned box in UI
+
+
+
+    },
+    error: function () {
+        alert("Fehler beim Zuweisen des Lagerplatzes.");
+    }
+});
+    }
+
+        function handleMeldenClick() {
+            AmagiLoader.show();
+    const bikeId = document.getElementById("barcodeInput").value;
+
+    if (!bikeId) {
+        alert("Bitte Barcode eingeben.");
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("Melden", "UnPacking")',
+        type: 'POST',
+        data: { bikeId: bikeId },
+        success: function (response) {
+            if (response.success) {
+                alert("Mangel erfolgreich gemeldet!");
+                AmagiLoader.hide();
+                location.reload();
+            } else {
+                showErrorMessage(response.message || "Unbekannter Fehler beim Melden.");
+                AmagiLoader.hide();
+            }
+        },
+        error: function (xhr) {
+            // Backend returned an error (e.g., 400)
+            const errorText = xhr.responseText || "Serverfehler beim Melden.";
+            showErrorMessage(errorText);
+            AmagiLoader.hide();
+        }
+    });
+}
+
+
+
+        document.querySelectorAll(".parking-slot").forEach(slot => {
+            if (slot.textContent.trim() === response.assignedBox) {
+                slot.classList.add("selected-slot");
+            } else {
+                slot.style.display = "none";
+            }
+        });
+        $(document).ready(function () {
+            $('#closeButton').on('click', function () {
+                location.reload();
+            });
+        });
+        $(document).ready(function () {
+            $('#closeButtonunpackwithframe').on('click', function () {
+                location.reload();
+            });
+        });
+
+        let errorTimeout;
+
+        function showErrorMessage(message) {
+            clearTimeout(errorTimeout);
+
+            const banner = document.getElementById("errorMessage");
+            const text = document.getElementById("errorText");
+
+            text.textContent = message;
+            banner.style.display = "flex";
+
+            errorTimeout = setTimeout(() => {
+                hideErrorMessage();
+            }, 8000);
+        }
+
+        function hideErrorMessage() {
+            document.getElementById("errorMessage").style.display = "none";
+        }
+        function showMontageBox() {
+            document.getElementById("montageBox").style.display = "block";
+            document.getElementById("rahmenBox").style.display = "none";
+            document.getElementById("rahmenInputBox").style.display = "none";
+
+        }
+                $(document).on("input", "#Rahmennummer", function () {
+            const value = $(this).val().trim();
+
+            if (value.length > 0) {
+                $("#printButton").prop("disabled", false);
+                $("#ohneRahmenButton").prop("disabled", true);
+
+            } else {
+                $("#printButton").prop("disabled", true);
+                $("#ohneRahmenButton").prop("disabled", false); // ✅ re-enable when empty
+            }
+                });
+
+        function showErrorMessageForSendEmail(message) {
+            clearTimeout(errorTimeout);
+            const banner = document.getElementById("errorMessageForSendEmail");
+            const text = document.getElementById("errorTextForSendEmail");
+            text.textContent = message;
+            banner.style.display = "flex";
+            errorTimeout = setTimeout(() => {
+                hideErrorMessageForSendEmail();
+            }, 5000);
+        }
+
+        function hideErrorMessageForSendEmail() {
+            document.getElementById("errorMessageForSendEmail").style.display = "none";
+        }
+
+        function printBarcodeFromPreview() {
+            debugger;
+                    const value = document.getElementById("Rahmennummer").value.trim();
+                    const bikeBrand = document.getElementById("bikeBrand").value;
+
+    // ---- inline checkRahmennummer ----
+    fetch('@Url.Action("ValidateRahmennummer", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'FrameData=' + encodeURIComponent(value) + '&bikeBrand=' + encodeURIComponent(bikeBrand)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                document.getElementById("Rahmennummer").focus();
+                showErrorMessage(data.message);
+                return;
+            }
+
+            // ✅ validation success
+            
+
+            // ---- only continue if valid ----
+            if (!value || value === "--") return;
+
+            const formData = new FormData();
+            formData.append("headingValue", "Rahmennummer");
+            formData.append("barcodeValue", value);
+
+            //const newTab = window.open();
+            //if (!newTab) {
+            //    alert("Bitte Pop-ups im Browser erlauben.");
+            //    return;
+            //}
+
+            // Open placeholder tab immediately (browser won’t block this)
+            const newTab = window.open("", "_blank");
+
+            fetch('@Url.Action("GenerateBarcodePdf", "Assembly")', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    debugger;
+                    if (!response.ok) throw new Error("Server error");
+
+
+                    const contentType = response.headers.get("content-type") || "";
+
+                    if (contentType.includes("application/pdf")) {
+                        return response.blob().then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            newTab.document.write(`
+                               <html>
+                                  <head><title>Fahrrad-Pass</title></head>
+                                  <body style="margin:0">
+                                   <div style="background-color:red; color:white; font-weight:bold;
+                                  text-align:center; padding:15px; font-size:18px;">
+                                  Drucker Einstellung fehlt
+                                 </div>
+                                  <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                                 </body>
+                                  </html>
+                                   `);
+                            newTab.document.close();
+                            document.getElementById("montageBox").style.display = "block";
+                            document.getElementById("rahmenBox").style.display = "none";
+                            document.getElementById("rahmenInputBox").style.display = "none";
+                        });
+                    } else {
+                        // ✅ Printer set → just show message
+                        return response.json().then(data => {
+                            if (data.success) {
+                                showErrorMessageForSendEmail("Etikett wurde gedruckt.");
+                                document.getElementById("montageBox").style.display = "block";
+                                document.getElementById("rahmenBox").style.display = "none";
+                                document.getElementById("rahmenInputBox").style.display = "none";
+                            } else {
+                                // ❌ Backend reported failure
+                                showErrorMessage(data.message || "Fehler beim Speichern.");
+                                console.error("Detail:", data.detail);
+                            }
+                            newTab.close(); // no need for tab in this case
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Fehler:", err);
+                    newTab.close();
+                    alert("Fehler beim Generieren des PDFs");
+                });
+        })
+        .catch(() => {
+            showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+            document.getElementById("Rahmennummer").focus();
+            
+            
+        });
+}
+
+    </script>
+
+
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="errorMessage" class="error-banner" style="display:none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorText"></span>
+            <span id="errorClose" onclick="hideErrorMessage()">×</span>
+        </div>
+        <div id="errorMessageForSendEmail" class="error-bannerForSendEmail" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorTextForSendEmail"></span>
+            <span id="errorCloseForSendEmail" onclick="hideErrorMessageForSendEmail()">×</span>
+        </div>
+        <div class="modal fade" id="mangelModal" tabindex="-1" role="dialog" aria-labelledby="mangelModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content text-center p-4">
+                    <h5 class="modal-title mb-3" id="mangelModalLabel"><strong>Mangel melden</strong></h5>
+                    <p>Die Seriennummer stimmt nicht mit dem erwarteten Fahrrad überein.</p>
+                    <div class="d-flex justify-content-between gap-3 mt-3">
+                        <button type="button" class="btn btn-outline-dark w-50" data-bs-dismiss="modal">Zurück</button>
+                        <button type="button" class="btn btn-danger w-50" onclick="handleMeldenClick()">Fehler Melden</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="row">
+                <div class="d-flex justify-content-between align-items-center mt-2 me-4">
+                    <h3></h3>
+                    <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                        <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                    </h4>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    <div class="circle-button">
+                        <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                            <button type="submit" class="logout-button" title="Unpacking">
+                                <i class="bi bi-box unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                        <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>*@
+
+
+
+                    }
+                    else if (ViewBag.IsUnpacker != null && ViewBag.IsUnpacker == true && ViewBag.IsMechanic != null && ViewBag.IsMechanic == true)
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    <div class="">
+                        <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="BikePassLog">
+                                <i class="bi bi-archive unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Push the following block to the bottom -->
+                    <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                        @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                        {
+                            <div class="register-button">
+                                <form action="@Url.Action("Register", "Account")">
+                                    <button type="submit" class="register-button" title="Register Neu">
+                                        <i class="bi bi-person-add"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Branches">
+                                        <i class="bi bi-card-list unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Rahmennummer">
+                                        <i class="bi bi-code unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+
+                        <div class="circle-button">
+                            <form action="@Url.Action("Logout", "Account")" method="post">
+                                @*@Html.AntiForgeryToken()*@
+                                <button type="submit" class="logout-button" title="Logout">
+                                    @ViewBag.UserName
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-8 parking-container">
+                <div id="shelfBox">
+                    <h4><strong>Lagerplätze</strong></h4>
+
+                    @foreach (var row in new[] { "A", "B" })
+                    {
+                        <div class="d-flex flex-wrap mb-3">
+                            @foreach (var slot in Model.Where(s => s.RowGroup == row))
+                            {
+                                var cssClass = slot.IsOccupied
+                                    ? (slot.IsPriority ? "slot-taken priority-slot" : "slot-taken")
+                                    : "";
+
+                                <div class="parking-slot @cssClass">
+                                    @slot.BoxName
+                                    @if (slot.IsPriority)
+                                    {
+                                        <i class="bi bi-star-fill text-warning ms-1" style="font-size: 12px;"></i>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+            <div class="col-md-3 secondBox">
+
+                
+                <!-- First section: input centered -->
+                <div class="scanner-box" id="ScannedBox">
+                    <form asp-controller="Scanner" asp-action="Scan" method="post" id="scanForm">
+                        <input type="text" id="barcodeInput" name="barcode" placeholder="Bitte scanne das Fahrrad" autofocus />
+                    </form>
+                </div>
+                <input type="hidden" id="getBarcodeFromAPI" />
+                <input type="hidden" id="bikeBrand" />
+                <!-- Second section: info from top -->
+                <div id="bikeInfoBox" style="display:none;">
+                    <img id="bikeImage" src="" alt="Produktbild" style="width: 270px; height: 150px; margin-bottom: 5px; display: none;  " />
+                    <strong>Marke:</strong> <span id="brand"></span><br />
+                    <strong>Model:</strong> <span id="model"></span><br />
+                    <strong>Artikelnummer:</strong> <span id="articleNumber"></span><br />
+                    <strong>EAN:</strong> <span id="ean"></span>
+
+                    <div id="extraInfo" class="mt-3 mb-0">
+                        @*<p style="cursor: pointer;" id="toggleInfo">
+                    <i class="bi bi-info-circle m-1" style="font-size: 15px;"></i>
+                    <strong>Zusätzliche Informationen</strong>
+                    <i id="toggleInfoIcon" class="bi bi-chevron-down m-1" style="font-size: 15px;"></i>
+                </p>*@
+                        <ul id="extraInfoList" style="list-style: none; padding: 0">
+                            <li><strong>Kategorie:</strong> <span id="kategorie"></span></li>
+                            <li><strong>Rahmentyp:</strong> <span id="rahmentyp"></span></li>
+                            <li><strong>Rahmenmaterial:</strong> <span id="rahmenmaterial"></span></li>
+                            <li><strong>Schaltung:</strong> <span id="schaltung"></span></li>
+                            <li><strong>Radgröße:</strong> <span id="radgroesse"></span></li>
+                            <li><strong>Rahmenhöhe:</strong> <span id="rahmenhoehe"></span></li>
+                            <li><strong>Farbe:</strong> <span id="farbe"></span></li>
+                            <li><strong id="akkuHead">Akku:</strong> <span id="akku"></span></li>
+                        </ul>
+                        <input class="form-check-input" type="checkbox" id="EbikeCheckbox" style="display:none" />
+                    </div>
+
+                    <div id="rahmenInputBox" class="mt-0">
+                        <label class="fw-bold">Rahmennummer</label>
+                        <input type="text" name="Rahmennummer" id="Rahmennummer" style="height:40px" />
+                    </div>
+                    <div id="montageBox" style="display:none">
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="priorityCheckbox" />
+                            <label class="form-check-label" for="priorityCheckbox">
+                                Hohe Priorität
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn btn-dark mt-1 w-100" onclick="handleWeiterClick()">
+                            Rad zur Montage
+                        </button>
+                        <button type="button" id="btnWarenausgang" class="btn btn-light mt-1 w-100" onclick="handleWeiterClickUnpackingWithFrameNumber()">
+                            Rad zum Warenausgang
+                        </button>
+                    </div>
+                    <div id="rahmenBox">
+
+                        <button type="button" id="ohneRahmenButton" class="btn btn-dark mt-1 w-100" onclick="showMontageBox()">
+                            Ohne Rahmennummer weiter
+                        </button>
+                        <button type="button" id="printButton" class="btn btn-light mt-1 w-100" disabled onclick="printBarcodeFromPreview()">
+                            Drucken
+                        </button>
+                    </div>
+
+                    @*<button type="button" class="btn-mangel-open btn mt-0 w-100" data-bs-toggle="modal" data-bs-target="#mangelModal">
+                <i class="bi bi-exclamation-triangle" style="color: #F85F68; font-size: 24px;"></i>
+                <span style="color: #F85F68; font-weight: bold; text-decoration: underline;">Mangel melden</span>
+            </button>*@
+                </div>
+                <div id="assigned-box-panel" style="display: none;">
+                    <!-- HIDE by default -->
+                    <div style="height:400px">
+                        <h3>Bring das Fahrrad zum Stellplatz:</h3>
+                        <div id="assigned-box" class="assigned-box-style"></div>
+                    </div>
+
+                    <button type="button" id="closeButton" class="btn btn-dark mt-3 w-100">
+                        Abschließen <i id="tickIcon" class="bi bi-check2"></i>
+                    </button>
+                </div>
+
+                <div id="assigned-box-panel-unpackwithframe" style="display: none;">
+                    <!-- HIDE by default -->
+                    <div style="height:400px">
+                        <h3>Bring das Fahrrad zum Warenausgang:</h3>
+                    </div>
+
+                    <button type="button" id="closeButtonunpackwithframe" class="btn btn-dark mt-3 w-100">
+                        Abschließen <i id="tickIcon" class="bi bi-check2"></i>
+                    </button>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+</body>
+</html>
+
+
+

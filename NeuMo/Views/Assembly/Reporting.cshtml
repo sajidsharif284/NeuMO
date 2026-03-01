@@ -1,0 +1,683 @@
+﻿@model List<NeuMo.Controllers.AssemblyController.BikeReportViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reporting</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/gh/AmagiTech/JSLoader/amagiloader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+
+    <style>
+        body {
+            margin: 0;
+            background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            font-family: sans-serif;
+        }
+
+
+        .custom-sidebar {
+            width: 50px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #e1005a;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            font-size: 22px;
+            color: #eaa;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .unPackerIcon {
+            font-size: 22px;
+            color: red;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+
+        .circle-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fdd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+        .register-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+
+        .logout-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e1005a;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 2px;
+            max-height: 80vh;
+            overflow-y: auto; /* allow scrolling if content is more */
+        }
+
+        .error-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: red;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            z-index: 9999;
+        }
+
+            .error-banner i {
+                margin-right: 10px;
+                font-size: 22px;
+            }
+
+        #errorText {
+            flex-grow: 1;
+        }
+
+        #errorClose {
+            cursor: pointer;
+            font-weight: bold;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f4f4f4;
+        }
+
+
+
+        .label {
+            font-weight: bold;
+        }
+
+        #contentForm{
+            padding-right:30px;
+        }
+    </style>
+
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const dateRangeSelector = document.getElementById("dateRangeSelector");
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+    const resetButton = document.getElementById("resetButton");
+    const branchSelector = document.getElementById("branchSelector");
+    const exportButton = document.getElementById("exportButton");
+    const baseUrl = '@Url.Action("Reporting", "Assembly")';
+
+    function formatDateLocal(date) {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Reliable Monday getter (works for Sunday..Saturday)
+    function getMonday(date) {
+        const d = new Date(date);
+        const diff = (d.getDay() + 6) % 7; // 0->Monday, 1->Tuesday ... 6->Sunday mapped to 6
+        const monday = new Date(d);
+        monday.setDate(d.getDate() - diff);
+        monday.setHours(0,0,0,0);
+        return monday;
+    }
+
+    // updateDashboard now accepts a range string (today|week|month|custom)
+    function updateDashboard(startDate, endDate, clearBranch = false, range = "") {
+        AmagiLoader.show();
+
+        const branch = clearBranch ? "" : (document.getElementById("branchSelector")?.value || "");
+
+        const query = new URLSearchParams({
+            startDate: startDate,
+            endDate: endDate
+        });
+
+        if (!clearBranch && branch) {
+            query.append("branchName", branch);
+        }
+
+        if (range) {
+            query.append("range", range);
+        }
+
+        // navigate
+        window.location.href = `${baseUrl}?${query.toString()}`;
+    }
+
+    // Read query params and set dropdown / inputs
+    function setDropdownByDateRange() {
+        // hide custom inputs by default
+        startDateInput.style.display = "none";
+        endDateInput.style.display = "none";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const startDate = urlParams.get("startDate");
+        const endDate = urlParams.get("endDate");
+        const range = urlParams.get("range"); // preferred authoritative source
+
+        // If explicit range provided in URL, use it
+        if (range) {
+            dateRangeSelector.value = range;
+            if (range === "custom") {
+                startDateInput.style.display = "inline-block";
+                endDateInput.style.display = "inline-block";
+                if (startDate) startDateInput.value = startDate;
+                if (endDate) endDateInput.value = endDate;
+            }
+            return;
+        }
+
+        // No explicit range -> fallback to inferring from dates
+        if (!startDate || !endDate) {
+            dateRangeSelector.value = "today";
+            return;
+        }
+
+        const todayStr = formatDateLocal(new Date());
+        if (startDate === todayStr && endDate === todayStr) {
+            dateRangeSelector.value = "today";
+            return;
+        }
+
+        const today = new Date();
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // compute current week's monday using getMonday
+        const monday = getMonday(today);
+
+        if (startDate === formatDateLocal(monday) && endDate === todayStr) {
+            dateRangeSelector.value = "week";
+        } else {
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            if (startDate === formatDateLocal(firstDayOfMonth) && endDate === todayStr) {
+                dateRangeSelector.value = "month";
+            } else {
+                dateRangeSelector.value = "custom";
+                startDateInput.style.display = "inline-block";
+                endDateInput.style.display = "inline-block";
+                startDateInput.value = startDate;
+                endDateInput.value = endDate;
+            }
+        }
+    }
+
+    // dropdown change -> compute dates and navigate (include range)
+    dateRangeSelector.addEventListener("change", () => {
+        const selectedValue = dateRangeSelector.value;
+        const today = new Date();
+        let startDate, endDate;
+
+        startDateInput.style.display = "none";
+        endDateInput.style.display = "none";
+
+        if (selectedValue === "today") {
+            startDate = endDate = formatDateLocal(today);
+            updateDashboard(startDate, endDate, false, "today");
+        } else if (selectedValue === "week") {
+            const monday = getMonday(today);
+            startDate = formatDateLocal(monday);
+            endDate = formatDateLocal(today);
+            updateDashboard(startDate, endDate, false, "week");
+        } else if (selectedValue === "month") {
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            startDate = formatDateLocal(firstDay);
+            endDate = formatDateLocal(today);
+            updateDashboard(startDate, endDate, false, "month");
+        } else if (selectedValue === "custom") {
+            // show inputs so user picks dates; don't navigate yet until both are chosen
+            startDateInput.style.display = "inline-block";
+            endDateInput.style.display = "inline-block";
+            // If inputs already have values, we can navigate immediately and include range=custom
+            if (startDateInput.value && endDateInput.value) {
+                updateDashboard(startDateInput.value, endDateInput.value, false, "custom");
+            }
+        }
+    });
+
+    // custom inputs change -> navigate with range=custom
+    startDateInput.addEventListener("change", () => {
+        if (startDateInput.value && endDateInput.value) {
+            updateDashboard(startDateInput.value, endDateInput.value, false, "custom");
+        }
+    });
+    endDateInput.addEventListener("change", () => {
+        if (startDateInput.value && endDateInput.value) {
+            updateDashboard(startDateInput.value, endDateInput.value, false, "custom");
+        }
+    });
+
+    // reset -> today and clear branch; include range param
+    resetButton.addEventListener("click", () => {
+        dateRangeSelector.value = "today";
+        startDateInput.style.display = "none";
+        endDateInput.style.display = "none";
+
+        const todayStr = formatDateLocal(new Date());
+        updateDashboard(todayStr, todayStr, true, "today"); // clears branch and sets range
+    });
+
+    // branch selector -> include range if present in URL (so dropdown stays consistent)
+    if (branchSelector) {
+        branchSelector.addEventListener("change", function () {
+            const branch = this.value;
+
+            let startDate = document.getElementById("startDate")?.value;
+            let endDate = document.getElementById("endDate")?.value;
+
+            // fallback to URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!startDate) startDate = urlParams.get("startDate");
+            if (!endDate) endDate = urlParams.get("endDate");
+
+            // final fallback to today
+            if (!startDate || !endDate) {
+                const today = new Date().toISOString().split("T")[0];
+                startDate = startDate || today;
+                endDate = endDate || today;
+            }
+
+            const range = urlParams.get("range") || ""; // preserve range if available
+
+            const query = new URLSearchParams({
+                branchName: branch,
+                startDate: startDate,
+                endDate: endDate
+            });
+            if (range) query.append("range", range);
+
+            window.location.href = `${baseUrl}?${query.toString()}`;
+        });
+    }
+
+    // export button: include range too (read from URL or inputs)
+    if (exportButton) {
+        exportButton.addEventListener("click", async function () {
+            AmagiLoader.show();
+
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!startDate) startDate = urlParams.get("startDate");
+            if (!endDate) endDate = urlParams.get("endDate");
+
+            if (!startDate || !endDate) {
+                const today = new Date().toISOString().split("T")[0];
+                startDate = startDate || today;
+                endDate = endDate || today;
+            }
+
+            const branch = document.getElementById("branchSelector")?.value || "";
+            const range = urlParams.get("range") || "";
+
+            const baseExportUrl = '@Url.Action("ExportUserReport", "Assembly")';
+            const exportUrlParams = new URLSearchParams({
+                startDate,
+                endDate,
+                branchName: branch
+            });
+            if (range) exportUrlParams.append("range", range);
+
+            const exportUrl = `${baseExportUrl}?${exportUrlParams.toString()}`;
+
+            try {
+                const response = await fetch(exportUrl, {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    }
+                });
+
+                const contentType = response.headers.get("content-type") || "";
+                if (contentType.includes("application/json")) {
+                    const result = await response.json();
+                    alert(result.message || "Keine Daten gefunden.");
+                    return;
+                }
+
+                if (!response.ok) throw new Error("Download failed: " + response.statusText);
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+
+                const contentDisposition = response.headers.get("Content-Disposition");
+                let fileName = "User_Report.xlsx";
+                if (contentDisposition && contentDisposition.includes("filename=")) {
+                    fileName = contentDisposition.split("filename=")[1].replace(/['"]/g, "");
+                }
+
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error("Error during file download:", error);
+                alert("Fehler beim Herunterladen der Datei. Bitte erneut versuchen.");
+            } finally {
+                AmagiLoader.hide();
+            }
+        });
+    }
+
+    // initialize UI from URL
+    setDropdownByDateRange();
+});
+    </script>
+
+
+
+
+</head>
+<body>
+    <div class="container-fluid">
+
+        <div id="errorMessage" class="error-banner" style="display:none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorText"></span>
+            <span id="errorClose" onclick="hideErrorMessage()">×</span>
+        </div>
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    @if (ViewBag.Flow != null && ViewBag.Flow == "Standard, Feste Auspacker & Montage")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "Direktmontage, Nur Monteure")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("DirektMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="DirektMontage">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "FlexModell, Flexible Auspacker & Monteur")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+                        <div class="circle-button">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                                <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                        <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>*@
+                        <div class="">
+                            <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="BikePassLog">
+                                    <i class="bi bi-archive unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+
+                    }
+                    else if (ViewBag.IsUnpacker != null && ViewBag.IsUnpacker == true && ViewBag.IsMechanic != null && ViewBag.IsMechanic == true)
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="circle-button">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="circle-button">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    }
+
+                    <!-- Push the following block to the bottom -->
+                <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+                        <div class="register-button">
+                            <form action="@Url.Action("Register", "Account")">
+                                <button type="submit" class="register-button" title="Register Neu">
+                                    <i class="bi bi-person-add"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Branches">
+                                    <i class="bi bi-card-list unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Rahmennummer">
+                                    <i class="bi bi-code unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    <div class="circle-button">
+                        <form action="@Url.Action("Logout", "Account")" method="post">
+                            @*@Html.AntiForgeryToken()*@
+                            <button type="submit" class="logout-button" title="Logout">
+                                @ViewBag.UserName
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+
+            <!-- Main content and right panel -->
+            <div class="col" id="contentForm">
+                <div class="row">
+                    <!-- Main content -->
+                    <div class="col-md-12">
+                        <div class=" mt-3">
+                            <div class="d-flex justify-content-end align-items-center w-100">
+                                <h4 style="font-weight:700; font-size:26px;">
+                                    <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                                </h4>
+                            </div>
+
+
+
+                        </div>
+                        <div class="main-content">
+                            <!-- Reporting Main Content -->
+                            <div class="container bg-white p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h2 class="fw-bold">Reporting</h2>
+                                    <div class="d-flex align-items-center">
+                                        <select id="branchSelector" class="form-select me-2" style="width: 180px;">
+                                            <option value="">Alle Filialen</option>
+                                            @foreach (var branch in ViewBag.Branches as List<string>)
+                                            {
+                                                // If branch matches ViewBag.SelectedBranch → mark as selected
+                                                var selected = branch == (string)ViewBag.SelectedBranch ? "selected" : "";
+                                                <option value="@branch" @selected>@branch</option>
+                                            }
+                                        </select>
+                                        <select id="dateRangeSelector" class="form-select me-2" style="width: 180px;">
+                                            <option value="today">Heute</option>
+                                            <option value="week">Diese Woche</option>
+                                            <option value="month">Dieser Monat</option>
+                                            <option value="custom">Benutzerdefiniert</option>
+                                        </select>
+
+                                        <input type="date" id="startDate" class="form-control me-2" style="display:none;" />
+                                        <input type="date" id="endDate" class="form-control me-2" style="display:none;" />
+
+                                        <button class="btn btn-light border text-danger fw-bold" id="resetButton">Zurücksetzen</button>
+                                        <button class="btn btn-success fw-bold ms-2" id="exportButton">Export</button>
+                                    </div>
+                                </div>
+
+
+                                <div class="row g-3 mb-4">
+
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-4 d-flex flex-column gap-3">
+                                        <div class="border rounded p-3">
+                                            <p class="mb-1 fw-bold">Insgesamt: Montierte Fahrräder</p>
+                                            <h2 class="fw-bold">@Model.Sum(m => m.TotalBikes)</h2>
+                                        </div>
+                                        <div class="border rounded p-3">
+                                            <p class="mb-1 fw-bold">Insgesamt: Fahrräder mit Mängeln</p>
+                                            <h2 class="fw-bold text-danger">@ViewBag.DefectedBikes</h2>
+                                        </div>
+                                    </div>
+                                    <!-- Example card -->
+                                    @foreach (var report in Model)
+                                    {
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3 h-100">
+                                                <p class="userName">@report.UserName</p>
+                                                <p class="mb-1 fw-bold">Schweres Rad<br /><h2 class="fw-bold">@report.DifficultBikes</h2></p>
+                                                <p class="mb-0 fw-bold">Leichtes Rad<br /><h2 class="fw-bold">@report.EasyBikes</h2></p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

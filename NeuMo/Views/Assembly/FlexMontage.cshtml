@@ -1,0 +1,2231 @@
+﻿@model List<NeuMo.Controllers.UnPackingController.StorageSlotViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lagerplätze</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/gh/AmagiTech/JSLoader/amagiloader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+
+    <style>
+        body {
+            margin: 0;
+            background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            font-family: sans-serif;
+        }
+
+
+        .custom-sidebar {
+            width: 50px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #e1005a;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            font-size: 22px;
+            color: #eaa;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .unPackerIcon {
+            font-size: 22px;
+            color: red;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+
+        .circle-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fdd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+        .register-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+
+        .logout-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e1005a;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 5px;
+            min-height: 80vh;
+        }
+
+        .right-panel {
+            background-color: #F4F4F4;
+            border-radius: 10px;
+            padding: 10px 30px 10px 30px;
+            margin: 5px 20px 0px 0px;
+            /* min-height: 75vh; */
+            min-height: 85vh; /* fix height so child flex 100% works */
+            display: flex; /* add flex to help layout children */
+            flex-direction: column;
+        }
+        .unpack-panel, .assembly-panel {
+            background-color: #F4F4F4;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 20px 0px 0px;
+            height: 35vh;
+            flex-direction: column; /* stack vertically */
+            justify-content: space-between; /* push first child up, last child down */
+        }
+
+        #homeScreen {
+
+        }
+
+        .parking-slot {
+            border: 2px solid black;
+            border-radius: 8px;
+            width: 50px;
+            height: 90px;
+            margin: 2px;
+            font-weight: bold;
+            padding: 2px;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .slot-taken {
+            background-color: black;
+            color: white;
+        }
+
+        .priority-slot i {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+        }
+
+        .selected-slot {
+            background-color: #56B8F1; /* Blue */
+            border-color: #198754;
+        }
+
+        #extraInfo p {
+            border-bottom: 1px solid #ccc;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #extraInfo {
+            height: 180px;
+        }
+
+        #scanBikeBox {
+            margin: 80px 0px 0px 350px;
+        }
+
+        #BikeSerialNo {
+            padding: 20px;
+            width: 36vh;
+        }
+
+            #BikeSerialNo::placeholder {
+                font-size: 1.25rem;
+                font-weight: bold;
+                color: #000;
+            }
+
+        .error-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: red;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            z-index: 9999;
+        }
+
+            .error-banner i {
+                margin-right: 10px;
+                font-size: 22px;
+            }
+
+        #errorText {
+            flex-grow: 1;
+        }
+
+        #errorClose {
+            cursor: pointer;
+            font-weight: bold;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+
+        .error-bannerForSendEmail {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: green;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            z-index: 9999;
+        }
+
+            .error-bannerForSendEmail i {
+                margin-right: 10px;
+                font-size: 22px;
+            }
+
+        #errorTextForSendEmail {
+            flex-grow: 1;
+        }
+
+        #errorCloseForSendEmail {
+            cursor: pointer;
+            font-weight: bold;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+
+        .form-section, .preview-section {
+            padding: 10px;
+            flex: 1;
+        }
+
+
+
+            .form-section h2 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f4f4f4;
+        }
+
+
+
+        .label {
+            font-weight: bold;
+        }
+
+        .print-button {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        .printIcons {
+            cursor: pointer;
+            font-size: 32px;
+        }
+
+        .print-button:hover {
+            background-color: #333;
+        }
+
+        .mangel-modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .mangel-modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 420px;
+            height: 500px; /* Increased height */
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: sans-serif;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtext {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 160px; /* Increased height */
+            resize: none;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .modal-upload-label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .modal-upload-boxes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .upload-box {
+            width: 70px;
+            height: 70px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #888;
+            border: 1px dashed #ccc;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+
+            .upload-box input.hidden-file {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            width: 170px;
+        }
+
+            .modal-btn.cancel {
+                background: #fff;
+                border: 1px solid #ccc;
+                color: #000;
+            }
+
+            .modal-btn.report {
+                background: #F85F68;
+                color: #fff;
+            }
+        .assigned-box-style {
+            width: 70px;
+            height: 100px;
+            border: 3px solid #000;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #btnWarenausgang {
+            border: 2px solid black;
+        }
+        #printButton {
+            border: 2px solid black;
+        }
+        #notifyAdminLink:hover {
+            color: #b80048;
+        }
+    </style>
+
+    <script>
+        let isRahmennummerValid = false;
+        function resetUIToInitialState() {
+            const allElementIds = [
+                "bikeInfoBox",
+                "homeScreenUnPack",
+                "homeScreenAssembly",
+                "SecondHomeScreen",
+                "scanBikeBox",
+                "previewSection",
+                "mainForm",
+                "bikeInputForm",
+                "scanBikeDataExist",
+                "isDifficultCheckboxContainer",
+                "btnFahrradGeholt",
+                "showBoxNameHeading",
+                "bikeImage",
+                "errorMessage",
+                "akkuStar",
+                "rahmenStar"
+            ];
+
+            // Hide and reset all elements
+            allElementIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.display = "none";
+                    el.className = ""; // Optional: remove classes if needed
+                }
+            });
+
+            // Reset form inputs or text if needed
+            const bikeDataInput = document.getElementById("bikeData");
+            if (bikeDataInput) {
+                bikeDataInput.value = "";
+            }
+
+            // Now show only the first element (e.g., bikeInputForm or homeScreen)
+            const firstDiv = document.getElementById("mainForm"); // Or "homeScreen"
+            //const secondDiv = document.getElementById("homeScreen"); // Or "homeScreen"
+            if (firstDiv) {
+                firstDiv.style.display = "block";
+                //secondDiv.style.display = "block";
+            }
+        }
+    // Helper: Save current UI state
+    function saveUIState() {
+        const divIds = [
+            "bikeInfoBox",
+            "homeScreenUnPack",
+            "homeScreenAssembly",
+            "SecondHomeScreen",
+            "scanBikeBox",
+            "previewSection",
+            "mainForm",
+            "bikeInputForm",
+            "scanBikeDataExist",
+            "isDifficultCheckboxContainer",
+            "btnFahrradGeholt",
+            "showBoxNameHeading",
+            "bikeImage",
+            "errorMessage",
+            "akkuStar",
+            "rahmenStar"
+        ];
+
+        const state = {};
+        divIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                state[id] = el.style.display || window.getComputedStyle(el).display;
+            }
+        });
+
+        // Also store bike data if available
+        state.bikeData = {
+            brand: document.getElementById("brand")?.innerText || "",
+            model: document.getElementById("model")?.innerText || "",
+            articleNumber: document.getElementById("articleNumber")?.innerText || "",
+            ean: document.getElementById("ean")?.innerText || "",
+            kategorie: document.getElementById("kategorie")?.innerText || "",
+            rahmentyp: document.getElementById("rahmentyp")?.innerText || "",
+            rahmenmaterial: document.getElementById("rahmenmaterial")?.innerText || "",
+            schaltung: document.getElementById("schaltung")?.innerText || "",
+            radgroesse: document.getElementById("radgroesse")?.innerText || "",
+            rahmenhoehe: document.getElementById("rahmenhoehe")?.innerText || "",
+            farbe: document.getElementById("farbe")?.innerText || "",
+            akku: document.getElementById("akku")?.innerText || "" ,
+            assignedBoxName: document.getElementById("assignedBoxName")?.innerText || "",
+            imageUrl: document.getElementById("bikeImage")?.src || "",
+            bikeId: document.getElementById("bikeId")?.value || "",
+            selectedMechanic: document.getElementById("selectedMechanic")?.value || "",
+            bikeBrand: document.getElementById("bikeBrand")?.value || "",
+            bikeFrameNr: document.getElementById("bikeFrameNr")?.value || "",
+            isEbike: document.getElementById("isEbike")?.value || "",
+            isRCategory: document.getElementById("isRCategory")?.value || "",
+            getBarcodeFromApiAssembly: document.getElementById("getBarcodeFromApiAssembly")?.value || "",
+            mechanicList: Array.from(mechanicDropdown?.options || []).map(opt => ({
+                value: opt.value,
+                text: opt.text
+            }))
+        };
+
+        const selectedSlot = document.querySelector('.parking-slot.selected-slot');
+        if (selectedSlot) {
+            state.selectedSlot = {
+                text: selectedSlot.textContent.trim(),
+                index: Array.from(document.querySelectorAll('.parking-slot')).indexOf(selectedSlot)
+            };
+        }
+
+        //localStorage.setItem("uiState", JSON.stringify(state));
+        const userKey = '@ViewBag.UserNameAndCompany';
+         localStorage.setItem(`uiState_${userKey}`, JSON.stringify(state));
+    }
+
+    // Helper: Restore previous UI state
+        function restoreUIState() {
+            debugger;
+            //localStorage.clear();
+            const userKey = '@ViewBag.UserNameAndCompany';
+            const stored = localStorage.getItem(`uiState_${userKey}`);
+        //const stored = localStorage.getItem("uiState");
+        if (!stored) return;
+
+        const state = JSON.parse(stored);
+
+        for (const id in state) {
+            if (id === "bikeData") continue;
+            if (id === "previewSection") {
+                debugger;
+                const bike = state.bikeData || {};
+                document.getElementById("preview-Seriennummer").innerText = bike.bikeId;
+                document.getElementById("rahmennummer").value = bike.bikeFrameNr;
+                const input = document.getElementById("rahmennummer");
+                if (input) {
+                    setTimeout(() => input.focus(), 50); // small delay ensures it's visible first
+                } else {
+                    console.error("Element with id='rahmennummer' not found.");
+                }
+            }
+            const el = document.getElementById(id);
+            if (el) el.style.display = state[id];
+        }
+
+
+        // Restore bike data
+            const bike = state.bikeData || {};
+            if (bike.brand != "")
+            {
+                if (state.selectedSlot) {
+                    const slots = document.querySelectorAll('.parking-slot');
+                    const selected = slots[state.selectedSlot.index];
+
+                    if (selected && selected.textContent.trim().startsWith(state.selectedSlot.text)) {
+                        selected.classList.add('selected-slot');
+                        selected.classList.remove('slot-taken');
+                        selected.style.opacity = '1';
+                    }
+                }
+            }
+            else {
+                // brand is empty or missing → hide SecondHomeScreen
+                document.getElementById("SecondHomeScreen").style.display = "none";
+                document.getElementById("homeScreenUnPack").style.display = "block";
+                document.getElementById("homeScreenAssembly").style.display = "block";
+
+            }
+
+
+        document.getElementById("brand").innerText = bike.brand || "";
+        document.getElementById("model").innerText = bike.model || "";
+        document.getElementById("articleNumber").innerText = bike.articleNumber || "";
+        document.getElementById("ean").innerText = bike.ean || "";
+        document.getElementById("kategorie").innerText = bike.kategorie || "";
+        document.getElementById("rahmentyp").innerText = bike.rahmentyp || "";
+        document.getElementById("rahmenmaterial").innerText = bike.rahmenmaterial || "";
+        document.getElementById("schaltung").innerText = bike.schaltung || "";
+        document.getElementById("radgroesse").innerText = bike.radgroesse || "";
+        document.getElementById("rahmenhoehe").innerText = bike.rahmenhoehe || "";
+            document.getElementById("farbe").innerText = bike.farbe || "";
+
+            // ✅ Restore mechanic dropdown (if mechanic list exists)
+            const dropdown = document.getElementById("mechanicDropdown");
+            if (dropdown) {
+                dropdown.innerHTML = "";
+                //dropdown.append(new Option("Wählen Sie Mechaniker", ""));
+
+                if (bike.mechanicList && bike.mechanicList.length > 0) {
+                    bike.mechanicList.forEach(m => {
+                        const option = new Option(m.text, m.value);
+
+                        if (bike.selectedMechanic === m.value) {
+                            option.selected = true;
+                        }
+
+                        dropdown.append(option);
+                    });
+                }
+            }
+
+        const akkuVal = bike.akku || "";
+            if (akkuVal?.trim() !== "") {
+                document.getElementById("akku").innerText = akkuVal;
+                document.getElementById("akkuContainer").style.display = "list-item";
+            } else {
+                document.getElementById("akkuContainer").style.display = "none";
+            }
+
+        document.getElementById("assignedBoxName").innerText = bike.assignedBoxName || "";
+            document.getElementById("bikeId").value = bike.bikeId || "";
+            document.getElementById("selectedMechanic").value = bike.selectedMechanic || "";
+
+            document.getElementById("bikeBrand").value = bike.bikeBrand || "";
+            document.getElementById("bikeFrameNr").value = bike.bikeFrameNr || "";
+            document.getElementById("isEbike").value = bike.isEbike || "";
+            document.getElementById("isRCategory").value = bike.isRCategory || "";
+
+            document.getElementById("getBarcodeFromApiAssembly").value = bike.getBarcodeFromApiAssembly || "";
+
+        const img = document.getElementById("bikeImage");
+        if (img && bike.imageUrl) {
+            img.src = bike.imageUrl;
+            img.style.display = 'block';
+        }
+    }
+
+    // Save state when navigating or leaving the page
+    window.addEventListener("beforeunload", saveUIState);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        restoreUIState();
+
+
+
+        const input = document.getElementById("BikeSerialNo");
+        const bikeIdInput = document.getElementById("bikeId");
+
+        if (input) {
+            input.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    debugger;
+                    e.preventDefault();
+                    let barcode = this.value;
+                    let bikeId = bikeIdInput.value;
+                    AmagiLoader.show();
+                    fetch('@Url.Action("ScanBike", "Assembly")', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'barcode=' + encodeURIComponent(barcode) + '&bikeId=' + encodeURIComponent(bikeId)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            AmagiLoader.hide();
+                            if (!data.success) {
+                                showErrorMessage(data.message);
+                                return;
+                            }
+
+
+                            document.getElementById("scanBikeDataExist").style.display = "block";
+                            document.getElementById("btnDataNotCorrect").style.display = "block";
+                            document.getElementById("isDifficultCheckboxContainer").style.display = "block";
+
+                            document.getElementById("scanBikeBox").style.display = "none";
+                            document.getElementById("preview-Seriennummer").innerText = bikeId;
+
+                            saveUIState();
+                        })
+                        .catch(() => showErrorMessage("Serverfehler. Bitte später erneut versuchen."));
+                }
+            });
+        }
+    });
+
+    function handleWeiterClick() {
+        AmagiLoader.show();
+        $.ajax({
+            url: '@Url.Action("AssignNextMontageJob", "Assembly")',
+            type: 'POST',
+            success: function (response) {
+                debugger;
+                if (!response.success) {
+                    showErrorMessage(response.message);
+                    AmagiLoader.hide();
+                    //alert(response.message);
+                    return;
+                }
+                AmagiLoader.hide();
+
+                document.querySelectorAll('.parking-slot').forEach(el => {
+                    el.classList.remove('selected-slot');
+                    el.style.opacity = '1';
+                });
+
+                const selectedSlot = Array.from(document.querySelectorAll('.parking-slot'))
+                    .find(el => el.textContent.trim().startsWith(response.boxName));
+                if (selectedSlot) {
+                    selectedSlot.classList.remove('slot-taken');
+                    selectedSlot.classList.add('selected-slot');
+                }
+
+                const bike = response.data;
+
+                document.getElementById("brand").innerText = bike.Brand;
+                document.getElementById("model").innerText = bike.Description;
+                document.getElementById("articleNumber").innerText = bike.Bar_Code;
+                document.getElementById("ean").innerText = bike.EAN;
+
+                document.getElementById("kategorie").innerText = bike.Item_Category_Code;
+                document.getElementById("rahmentyp").innerText = bike.Frame_Type;
+                document.getElementById("rahmenmaterial").innerText = bike.Frame_Material;
+                document.getElementById("schaltung").innerText = bike.Gearshift;
+                document.getElementById("radgroesse").innerText = bike.Wheel_Size;
+                document.getElementById("rahmenhoehe").innerText = bike.Frame_Height;
+                document.getElementById("farbe").innerText = bike.ColourForName;
+                document.getElementById("assignedBoxName").innerText = "[" + response.boxName + "]";
+                document.getElementById("bikeId").value = response.bikeId;
+                document.getElementById("selectedMechanic").value = response.currentUserName;
+
+                document.getElementById("bikeBrand").value = bike.Brand;
+
+                document.getElementById("rahmennummer").value = response.FrameNr;
+                document.getElementById("bikeFrameNr").value = response.FrameNr;
+                document.getElementById("isEbike").value = bike.isebike ? 1 : 0;
+
+                document.getElementById("isRCategory").value = response.isRCategory ? 1 : 0;
+
+                document.getElementById("getBarcodeFromApiAssembly").value = bike.Bar_Code;
+
+                //if (bike.cr023_motor?.trim()) {
+                //    document.getElementById("akku").innerText = bike.cr023_motor;
+                //    document.getElementById("akkuHead").style.display = "block";
+                //} else {
+                //    document.getElementById("akkuHead").style.display = "none";
+                //}
+
+                const dropdown = $('#mechanicDropdown');
+                dropdown.empty(); // clear existing options
+
+                // Add a default option
+                dropdown.append('<option value="">Wählen Sie Mechaniker</option>');
+
+                // Fill dropdown with mechanics from response
+                $.each(response.mechanics, function (i, mechanic) {
+                    // If you returned currentUserName, compare with mechanic.UserName
+                    const selected = mechanic.UserName === response.currentUserName ? 'selected' : '';
+                    dropdown.append(`<option value="${mechanic.UserName}" ${selected}>${mechanic.UserName}</option>`);
+                });
+
+
+                const akkuVal = bike.E_Bike_Engine || "";
+                if (akkuVal?.trim() !== "") {
+                    document.getElementById("akku").innerText = akkuVal;
+                    document.getElementById("akkuContainer").style.display = "list-item";
+                } else {
+                    document.getElementById("akkuContainer").style.display = "none";
+                }
+
+                if (response.imageUrl) {
+                    const img = document.getElementById("bikeImage");
+                    img.src = response.imageUrl;
+                    img.style.display = 'block';
+                }
+
+                document.getElementById("bikeInfoBox").style.display = "block";
+                document.getElementById("homeScreenUnPack").style.display = "none";
+                document.getElementById("homeScreenAssembly").style.display = "none";
+                document.getElementById("SecondHomeScreen").style.display = "block";
+
+                document.getElementById("scanBikeDataExist").style.display = "none";
+                document.getElementById("isDifficultCheckboxContainer").style.display = "none";
+                //UnpackingAndAssemblyBox
+
+                saveUIState();
+            },
+            error: function () {
+                AmagiLoader.hide();
+                alert("Fehler beim Zuweisen des Lagerplatzes.");
+            }
+        });
+    }
+
+        function showBikeScanBox() {
+            const bikeId = document.getElementById("bikeId").value;
+            AmagiLoader.show();
+             $.ajax({
+             url: '@Url.Action("FreeUpSpace", "Assembly")',
+                  type: 'POST',
+                  data: { bikeId: bikeId },
+             success: function (response) {
+                 if (!response.success)
+                 {
+                     showErrorMessage(response.message);
+                     AmagiLoader.hide();
+                     //alert(response.message);
+                      return;
+                 }
+                  AmagiLoader.hide();
+                 document.getElementById("scanBikeBox").style.display = "block";
+                 document.getElementById("showBoxNameHeading").style.display = "none";
+                 document.getElementById("btnFahrradGeholt").style.display = "none";
+                 const input = document.getElementById("BikeSerialNo");
+                 input.focus();
+
+                 saveUIState();
+
+             },
+             error: function () {
+                  AmagiLoader.hide();
+                  alert("Fehler beim Zuweisen des Lagerplatzes.");
+             }
+             });
+
+
+
+    }
+
+        function showPrintDataForm() {
+            debugger;
+            const input = document.getElementById("rahmennummer");
+            if (input) {
+                setTimeout(() => input.focus(), 50); // small delay ensures it's visible first
+            } else {
+                console.error("Element with id='rahmennummer' not found.");
+            }
+
+            const isEbike = document.getElementById("isEbike").value;
+            if (isEbike === "0") {
+                document.getElementById("akkuStar").style.display = "none";
+            }
+
+            const isRCategory = document.getElementById("isRCategory").value;
+            if (isRCategory === "1") {
+                document.getElementById("rahmenStar").style.display = "none";
+            }
+
+            const isDifficultChecked = document.getElementById("isDifficultCheckbox").checked;
+            if (isDifficultChecked) {
+                document.getElementById("akkuStar").style.display = "none";
+            }
+
+        document.getElementById("bikeInfoBox").style.display = "none";
+        document.getElementById("previewSection").style.display = "block";
+        document.getElementById("mainForm").style.display = "none";
+        document.getElementById("bikeInputForm").style.display = "block";
+
+
+        saveUIState();
+    }
+
+    function showErrorMessage(message) {
+        clearTimeout(errorTimeout);
+        const banner = document.getElementById("errorMessage");
+        const text = document.getElementById("errorText");
+        text.textContent = message;
+        banner.style.display = "flex";
+        errorTimeout = setTimeout(() => {
+            hideErrorMessage();
+        }, 8000);
+    }
+
+    function hideErrorMessage() {
+        document.getElementById("errorMessage").style.display = "none";
+        const input = document.getElementById("BikeSerialNo");
+        input.focus();
+        }
+
+        function showErrorMessageForSendEmail(message) {
+            clearTimeout(errorTimeout);
+            const banner = document.getElementById("errorMessageForSendEmail");
+            const text = document.getElementById("errorTextForSendEmail");
+            text.textContent = message;
+            banner.style.display = "flex";
+            errorTimeout = setTimeout(() => {
+                hideErrorMessageForSendEmail();
+            }, 5000);
+        }
+
+        function hideErrorMessageForSendEmail() {
+            document.getElementById("errorMessageForSendEmail").style.display = "none";
+        }
+
+        function updatePreview(id) {
+            debugger;
+        const value = document.getElementById(id).value;
+        document.getElementById(`preview-${id}`).innerText = value || 'Lorem';
+        }
+        function validateFields() {
+            const isEbike = document.getElementById("isEbike").value;
+            const isRCategory = document.getElementById("isRCategory").value;
+
+            const rahmen = document.getElementById('rahmennummer').value.trim();
+            const akku = document.getElementById('Akkunummer').value.trim();
+            const mechanic = document.getElementById('mechanicDropdown').value.trim();
+            const button = document.getElementById('printBtn');
+            const buttonComplete = document.getElementById('completeJobBtn');
+            // New: check if “Schweres Rad” is checked
+            const isDifficultChecked = document.getElementById("isDifficultCheckbox").checked;
+
+            // Mechanic is valid only if user selected something (not empty)
+            const isMechanicValid = mechanic !== "";
+            //const isAkkuValid = isEbike == 1 ? akku !== "" : true;
+            // Akku is required only if e-bike AND not a "Schweres Rad"
+            const isAkkuValid = (isEbike == 1 && !isDifficultChecked) ? akku !== "" : true;
+
+            if (isRCategory === "1") {
+                const allValid = isAkkuValid && isMechanicValid;
+
+                button.disabled = !allValid;
+                buttonComplete.disabled = !allValid;
+
+            }
+            else {
+                const allValid = rahmen && isAkkuValid && isRahmennummerValid && isMechanicValid;
+
+                button.disabled = !allValid;
+                buttonComplete.disabled = !allValid;
+            }
+        }
+
+
+        function printBarcodeFromPreview(previewId) {
+            const value = document.getElementById(previewId)?.innerText.trim();
+            if (!value || value === "--") return;
+
+            const formData = new FormData();
+            formData.append("headingValue", previewId);
+            formData.append("barcodeValue", value);
+
+            //const newTab = window.open();
+            //if (!newTab) {
+            //    alert("Bitte Pop-ups im Browser erlauben.");
+            //    return;
+            //}
+
+            // Open placeholder tab immediately (browser won’t block this)
+            const newTab = window.open("", "_blank");
+
+            fetch('@Url.Action("GenerateBarcodePdf", "Assembly")', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    debugger;
+                    if (!response.ok) throw new Error("Server error");
+
+
+                    const contentType = response.headers.get("content-type") || "";
+
+                    if (contentType.includes("application/pdf")) {
+                        return response.blob().then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            newTab.document.write(`
+                             <html>
+                              <head><title>Fahrrad-Pass</title></head>
+                              <body style="margin:0">
+                              <div style="background-color:red; color:white; font-weight:bold;
+                              text-align:center; padding:15px; font-size:18px;">
+                              Drucker Einstellung fehlt
+                              </div>
+                              <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                              </body>
+                              </html>
+                                 `);
+                            newTab.document.close();
+                        });
+                    } else {
+                        // ✅ Printer set → just show message
+                        return response.json().then(data => {
+                            if (data.success) {
+                                //showErrorMessageForSendEmail("Etikett wurde gedruckt.");
+                                alert("Etikett wurde gedruckt");
+                            } else {
+                                // ❌ Backend reported failure
+                                showErrorMessage(data.message || "Fehler beim Speichern.");
+                                console.error("Detail:", data.detail);
+                            }
+                            newTab.close(); // no need for tab in this case
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Fehler:", err);
+                    newTab.close();
+                    alert("Fehler beim Generieren des PDFs");
+                });
+        }
+
+
+        function checkRahmennummer() {
+            debugger;
+            const isRCategory = document.getElementById("isRCategory").value;
+
+            // ✅ Skip validation if R category
+            if (isRCategory == 1) {
+                console.log("Skipping Rahmennummer check because R-Category is active.");
+                return;
+            }
+        const value = document.getElementById("rahmennummer").value;
+        const bikeBrand = document.getElementById("bikeBrand").value;
+
+        fetch('@Url.Action("ValidateRahmennummer", "Assembly")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'FrameData=' + encodeURIComponent(value) + '&bikeBrand=' + encodeURIComponent(bikeBrand)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    if (!isModalOpen()) {
+                        document.getElementById("rahmennummer").focus();
+                    }
+                    showErrorMessage(data.message);
+                    isRahmennummerValid = false;
+                    document.getElementById("notifyAdmin").style.display = "block";
+                    validateFields();
+                    return;
+                }
+                isRahmennummerValid = true; // ✅ validation success
+                document.getElementById("notifyAdmin").style.display = "none";
+                document.getElementById("preview-Rahmennummer").innerText = value;
+                validateFields(); // recheck form state
+            })
+            .catch(() => {
+                showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+                document.getElementById("rahmennummer").focus();
+                isRahmennummerValid = false;
+                validateFields();
+            });
+        }
+
+        function notifyAdminFrameNo() {
+                debugger;
+
+                AmagiLoader.show();
+                const value = document.getElementById("rahmennummer").value;
+                const bikeBrand = document.getElementById("bikeBrand").value;
+                const bikeId = document.getElementById("bikeId").value;
+
+                if (!value || value.trim() === "") {
+                    showErrorMessage("Bitte Rahmennummer eingeben bevor du den Admin informierst.");
+                    return;
+                }
+
+    fetch('@Url.Action("NotifyAdminWrongFrameNo", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'FrameData=' + encodeURIComponent(value) + '&bikeBrand=' + encodeURIComponent(bikeBrand) + '&bikeId=' + encodeURIComponent(bikeId)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                AmagiLoader.hide();
+                document.getElementById("rahmennummer").focus();
+                showErrorMessage(data.message);
+
+                return;
+            }
+            AmagiLoader.hide();
+            document.getElementById("rahmennummer").focus();
+            alert("Der Admin wurde informiert. Vielen Dank!");
+        })
+        .catch(() => {
+            AmagiLoader.hide();
+            showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+            document.getElementById("rahmennummer").focus();
+
+        });
+}
+
+        let errorTimeout;
+        function isModalOpen() {
+            const modal = document.querySelector('.mangel-modal-container');
+            return modal && modal.style.display !== 'none';
+        }
+
+        function generateAndPrintPdf() {
+            debugger;
+            const form = document.getElementById("fahrradForm");
+            const formData = new FormData(form);
+
+            // Add bikeId manually if it's outside the form
+            formData.append("bikeId", document.getElementById("bikeId").value);
+            formData.append("barcode", document.getElementById("getBarcodeFromApiAssembly").value);
+
+            const isDifficult = document.getElementById("isDifficultCheckbox").checked;
+            formData.append("isDifficultCheckbox", isDifficult);
+
+            //const newTab = window.open();
+            //if (!newTab) {
+            //    alert("Bitte Pop-ups im Browser erlauben.");
+            //    return;
+            //}
+
+            // Open placeholder tab immediately (browser won’t block this)
+            const newTab = window.open("", "_blank");
+
+            fetch('@Url.Action("GenerateFahrradPass", "Assembly")', {
+                method: 'POST',
+                body: formData // Don't set Content-Type, browser will handle it
+            })
+                .then(response => {
+                    debugger;
+                    if (!response.ok) throw new Error("Server error");
+
+
+                    const contentType = response.headers.get("content-type") || "";
+
+                    if (contentType.includes("application/pdf")) {
+                        return response.blob().then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            newTab.document.write(`
+                           <html>
+                           <head><title>Fahrrad-Pass</title></head>
+                           <body style="margin:0">
+                           <div style="background-color:red; color:white; font-weight:bold;
+                             text-align:center; padding:15px; font-size:18px;">
+                             Drucker Einstellung fehlt
+                             </div>
+                            <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                            </body>
+                           </html>
+                             `);
+                            newTab.document.close();
+                        });
+                    } else {
+                        // ✅ Printer set → just show message
+                        return response.json().then(data => {
+                            if (data.success) {
+                                //showErrorMessageForSendEmail("Fahrradpass wurde gedruckt.");
+                                alert("Fahrradpass wurde gedruckt");
+                            } else {
+                                // ❌ Backend reported failure
+                                showErrorMessage(data.message || "Fehler beim Speichern.");
+                                console.error("Detail:", data.detail);
+                            }
+                            newTab.close(); // no need for tab in this case
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Fehler:", err);
+                    newTab.close();
+                    alert("Fehler beim Generieren des PDFs");
+                });
+        }
+
+        function completeJobButton() {
+            const form = document.getElementById("fahrradForm");
+            const formData = new FormData(form);
+
+            // Add bikeId manually if it's outside the form
+            formData.append("bikeId", document.getElementById("bikeId").value);
+            formData.append("barcode", document.getElementById("getBarcodeFromApiAssembly").value);
+
+            const isDifficult = document.getElementById("isDifficultCheckbox").checked;
+            formData.append("isDifficultCheckbox", isDifficult);
+
+            AmagiLoader.show();
+            fetch('@Url.Action("CompleteJob", "Assembly")', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        AmagiLoader.hide();
+                        showErrorMessage(data.message);
+                        return;
+                    }
+                     AmagiLoader.hide();
+                     location.reload();
+                     const userKey = '@ViewBag.UserNameAndCompany';
+                     localStorage.removeItem(`uiState_${userKey}`);
+
+                })
+                .catch(() => {
+                    AmagiLoader.hide();
+                    showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+
+                });
+        }
+        function inCompleteJobButton() {
+    const bikeId = document.getElementById("bikeId").value;
+    AmagiLoader.show();
+    fetch('@Url.Action("InCompleteJob", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'bikeId=' + encodeURIComponent(bikeId)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                AmagiLoader.hide();
+                showErrorMessage(data.message);
+                return;
+            }
+            AmagiLoader.hide();
+            localStorage.setItem("emailMessage", data.message);
+             location.reload();
+
+             const userKey = '@ViewBag.UserNameAndCompany';
+             localStorage.removeItem(`uiState_${userKey}`);
+
+        })
+        .catch(() => {
+            AmagiLoader.hide();
+            showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+
+        });
+}
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const msg = localStorage.getItem("emailMessage");
+            if (msg) {
+                showErrorMessageForSendEmail(msg);
+                localStorage.removeItem("emailMessage");
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const openButtons = document.querySelectorAll('.btn-mangel-open'); // handles multiple buttons
+            const modalContainer = document.querySelector('.mangel-modal-container');
+            const closeButton = document.querySelector('.btn-mangel-close');
+            const submitButton = document.querySelector('.modal-btn.report');
+
+            if (openButtons.length && modalContainer && closeButton && submitButton) {
+                openButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        modalContainer.style.display = 'flex';
+
+                        // Get textarea inside modal
+                        const textarea = modalContainer.querySelector('.modal-textarea');
+
+                        // Optional: Clear old comment
+                        textarea.value = '';
+
+                        // Focus the textarea so typing goes here
+                        textarea.focus();
+                    });
+                });
+
+                closeButton.addEventListener('click', () => {
+                    modalContainer.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modalContainer) {
+                        modalContainer.style.display = 'none';
+                    }
+                });
+
+                submitButton.addEventListener('click', async () => {
+                    modalContainer.style.display = 'none';
+                    AmagiLoader.show();
+
+
+                    const comment = document.querySelector('.modal-textarea').value;
+                    const files = [
+                        document.getElementById('img1').files[0],
+                        document.getElementById('img2').files[0],
+                        document.getElementById('img3').files[0],
+                        document.getElementById('img4').files[0]
+                    ].filter(file => file !== undefined);
+
+                    const formData = new FormData();
+                    const bikeId = document.getElementById("bikeId").value;
+                    const barcode = document.getElementById("getBarcodeFromApiAssembly").value;
+
+                    formData.append('Comment', comment);
+                    formData.append('bikeId', bikeId);
+                    formData.append('barcode', barcode);
+
+                    files.forEach(file => {
+                        formData.append('Images', file); // Note: use same name "Images" to bind as IEnumerable<HttpPostedFileBase>
+                    });
+                    try {
+                        const response = await fetch('@Url.Action("Melden", "Assembly")', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        debugger;
+                        const data = await response.json();
+                        if (data.success) {
+                            AmagiLoader.hide();
+                            location.reload();
+                            const userKey = '@ViewBag.UserNameAndCompany';
+                            localStorage.removeItem(`uiState_${userKey}`);
+
+                        } else {
+                            AmagiLoader.hide();
+                            showErrorMessage(data.message); // Show the message from the server
+                        }
+                    } catch (error) {
+                        AmagiLoader.hide();
+                        console.error('Fehler:', error);
+                        showErrorMessage('Netzwerkfehler.');
+                    }
+
+
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInputs = document.querySelectorAll('.upload-box input[type="file"]');
+
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const previewDiv = this.parentElement.querySelector('.preview-image');
+                            previewDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" />`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        });
+
+
+
+
+
+        // For Unpacking
+        document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("barcodeInput");
+
+    if (input) {
+        input.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                debugger;
+                e.preventDefault();
+                let barcode = this.value;
+                AmagiLoader.show();
+                fetch('@Url.Action("ScanJson", "UnPacking")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'SerialNo=' + encodeURIComponent(barcode)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        debugger;
+                        AmagiLoader.hide();
+                        if (!data.success) {
+                            showErrorMessage(data.message); // show backend error
+                            return;
+                        }
+                        if (data.image) {
+                            const imageElement = document.getElementById("bikeImageUnpack");
+                            if (imageElement) {
+                                imageElement.src = data.image;
+                                imageElement.style.display = "block";
+                            }
+                        }
+
+                        const bike = data.data; // 👈 unwrap bike data
+
+                        document.getElementById("brandUnpack").innerText = bike.Brand;
+                        document.getElementById("modelUnpack").innerText = bike.Description;
+                        document.getElementById("articleNumberUnpack").innerText = bike.Bar_Code;
+                        document.getElementById("eanUnpack").innerText = bike.EAN;
+
+                        document.getElementById("kategorieUnpack").innerText = bike.Item_Category_Code;
+                        document.getElementById("rahmentypUnpack").innerText = bike.Frame_Type;
+                        document.getElementById("rahmenmaterialUnpack").innerText = bike.Frame_Material;
+                        document.getElementById("schaltungUnpack").innerText = bike.Gearshift;
+                        document.getElementById("radgroesseUnpack").innerText = bike.Wheel_Size;
+                        document.getElementById("rahmenhoeheUnpack").innerText = bike.Frame_Height;
+                        document.getElementById("farbeUnpack").innerText = bike.ColourForName;
+
+                        document.getElementById("EbikeCheckboxUnpack").checked = bike.isebike === true;
+
+                        document.getElementById("getBarcodeFromAPIUnpack").value = bike.Bar_Code;
+                        document.getElementById("bikeBrandUnpack").value = bike.Brand;
+
+                        if (bike.E_Bike_Engine && bike.E_Bike_Engine.trim() !== "") {
+                            document.getElementById("akkuUnpack").innerText = bike.E_Bike_Engine;
+                        }
+                        else
+                        {
+                            document.getElementById("akkuHeadUnpack").style.display = "none";
+                        }
+
+
+                        document.getElementById("homeScreenUnPack").style.display = "none";
+                        document.getElementById("homeScreenAssembly").style.display = "none";
+                        document.getElementById("SecondHomeScreen").style.display = "block";
+                        document.getElementById("bikeInfoBoxForUnpack").style.display = "block";
+
+                    })
+                    .catch(error => {
+                        AmagiLoader.hide();
+                        showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+
+                    });
+            }
+        });
+    } else {
+        console.error("barcodeInput element not found in the DOM.");
+    }
+        });
+
+
+        function handleWeiterClickForUnpack() {
+            debugger;
+            const barcode = document.getElementById("barcodeInput").value;
+            const getBarcodeFromAPIUnpack = document.getElementById("getBarcodeFromAPIUnpack").value;
+            const isPriority = document.getElementById("priorityCheckbox").checked;
+            const isEbike = document.getElementById("EbikeCheckboxUnpack").checked;
+            const rahmenNumber = document.getElementById("RahmennummerForUnpack").value;
+if (!barcode) {
+    alert("Bitte Barcode eingeben.");
+    return;
+}
+
+$.ajax({
+    url: '@Url.Action("AssignBikeSlot", "UnPacking")',
+    type: 'POST',
+    data: {
+        SerialNo: barcode,
+        barcode: getBarcodeFromAPIUnpack,
+        isPriority: isPriority,
+        isEbike: isEbike,
+        rahmenNumber: rahmenNumber
+    },
+    success: function (response) {
+        if (!response.success) {
+            // If no slot is available, show alert and reload
+            showErrorMessage(response.message); // show backend error
+            //location.reload();
+            return;
+        }
+
+        // Hide scan box and info box
+
+        document.getElementById("bikeInfoBoxForUnpack").style.display = "none";
+
+        // Update and show assigned box panel
+        const assignedPanel = document.getElementById("assigned-box-panel");
+        const assignedBox = document.getElementById("assigned-box");
+
+        assignedBox.textContent = response.assignedBox;
+        assignedPanel.style.display = "block";
+
+        // Optional: highlight the assigned box in UI
+        document.querySelectorAll('.parking-slot').forEach(el => {
+            if (el.textContent.trim() === response.assignedBox) {
+                el.classList.add('selected-slot');
+            } else {
+                el.style.opacity = '0.2'; // visually dim others
+            }
+        });
+
+
+    },
+    error: function () {
+        alert("Fehler beim Zuweisen des Lagerplatzes.");
+    }
+});
+        }
+
+                function handleWeiterClickUnpackingWithFrameNumber() {
+                   const btn = event.target;
+                    btn.disabled = true;
+                    const barcode = document.getElementById("barcodeInput").value;
+                    const getBarcodeFromAPIUnpack = document.getElementById("getBarcodeFromAPIUnpack").value;
+                    const isPriority = document.getElementById("priorityCheckbox").checked;
+                    const isEbike = document.getElementById("EbikeCheckboxUnpack").checked;
+                    const rahmenNumber = document.getElementById("RahmennummerForUnpack").value;
+if (!barcode) {
+    alert("Bitte Barcode eingeben.");
+    return;
+}
+
+$.ajax({
+    url: '@Url.Action("UnpackingWithFrameNumber", "UnPacking")',
+    type: 'POST',
+    data: {
+        SerialNo: barcode,
+        barcode: getBarcodeFromAPIUnpack,
+        isPriority: isPriority,
+        isEbike: isEbike,
+        rahmenNumber: rahmenNumber,
+    },
+    success: function (response) {
+        if (!response.success) {
+            // If no slot is available, show alert and reload
+            showErrorMessage(response.message); // show backend error
+            //location.reload();
+            return;
+        }
+
+        // Hide scan box and info box
+        document.getElementById("bikeInfoBoxForUnpack").style.display = "none";
+        document.getElementById("mainForm").style.display = "none";
+
+
+        // Update and show assigned box panel
+        const assignedPanel = document.getElementById("assigned-box-panel-unpackwithframe");
+
+        assignedPanel.style.display = "block";
+
+        // Optional: highlight the assigned box in UI
+
+
+
+    },
+    error: function () {
+        alert("Fehler beim Zuweisen des Lagerplatzes.");
+    }
+});
+    }
+
+        $(document).ready(function () {
+            $('#closeButton').on('click', function () {
+                debugger;
+                document.getElementById("homeScreenUnPack").style.display = "block";
+                document.getElementById("homeScreenAssembly").style.display = "block";
+                document.getElementById("SecondHomeScreen").style.display = "none";
+                document.getElementById("bikeInfoBoxForUnpack").style.display = "none";
+                const slots = document.querySelectorAll('.parking-slot');
+                slots.forEach(slot => {
+                    slot.classList.remove("faded");
+                });
+                location.reload();
+            });
+        });
+        $(document).ready(function () {
+            $('#closeButtonunpackwithframe').on('click', function () {
+                debugger;
+                document.getElementById("homeScreenUnPack").style.display = "block";
+                document.getElementById("homeScreenAssembly").style.display = "block";
+                document.getElementById("mainForm").style.display = "block";
+                document.getElementById("SecondHomeScreen").style.display = "none";
+                document.getElementById("bikeInfoBoxForUnpack").style.display = "none";
+
+                location.reload();
+            });
+        });
+
+
+        function showMontageBox() {
+            document.getElementById("montageBox").style.display = "block";
+            document.getElementById("rahmenBox").style.display = "none";
+            document.getElementById("rahmenInputBox").style.display = "none";
+
+        }
+        $(document).on("input", "#RahmennummerForUnpack", function () {
+            const value = $(this).val().trim();
+
+            if (value.length > 0) {
+                $("#printButton").prop("disabled", false);
+                $("#ohneRahmenButton").prop("disabled", true);
+
+            } else {
+                $("#printButton").prop("disabled", true);
+                $("#ohneRahmenButton").prop("disabled", false); // ✅ re-enable when empty
+            }
+        });
+
+
+
+                function printBarcode() {
+            debugger;
+                    const value = document.getElementById("RahmennummerForUnpack").value.trim();
+                    const bikeBrand = document.getElementById("bikeBrandUnpack").value;
+
+    // ---- inline checkRahmennummer ----
+    fetch('@Url.Action("ValidateRahmennummer", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'FrameData=' + encodeURIComponent(value) + '&bikeBrand=' + encodeURIComponent(bikeBrand)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                document.getElementById("RahmennummerForUnpack").focus();
+                showErrorMessage(data.message);
+                return;
+            }
+
+            // ✅ validation success
+
+
+            // ---- only continue if valid ----
+            if (!value || value === "--") return;
+
+            const formData = new FormData();
+            formData.append("headingValue", "Rahmennummer");
+            formData.append("barcodeValue", value);
+
+            //const newTab = window.open();
+            //if (!newTab) {
+            //    alert("Bitte Pop-ups im Browser erlauben.");
+            //    return;
+            //}
+
+            // Open placeholder tab immediately (browser won’t block this)
+            const newTab = window.open("", "_blank");
+
+            fetch('@Url.Action("GenerateBarcodePdf", "Assembly")', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    debugger;
+                    if (!response.ok) throw new Error("Server error");
+
+
+                    const contentType = response.headers.get("content-type") || "";
+
+                    if (contentType.includes("application/pdf")) {
+                        return response.blob().then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            newTab.document.write(`
+                            <html>
+                             <head><title>Fahrrad-Pass</title></head>
+                             <body style="margin:0">
+                             <div style="background-color:red; color:white; font-weight:bold;
+                             text-align:center; padding:15px; font-size:18px;">
+                             Drucker Einstellung fehlt
+                             </div>
+                              <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                            </body>
+                           </html>
+                             `);
+                            newTab.document.close();
+                            document.getElementById("montageBox").style.display = "block";
+                            document.getElementById("rahmenBox").style.display = "none";
+                            document.getElementById("rahmenInputBox").style.display = "none";
+                        });
+                    } else {
+                        // ✅ Printer set → just show message
+                        return response.json().then(data => {
+                            if (data.success) {
+                                showErrorMessageForSendEmail("Etikett wurde gedruckt.");
+                                document.getElementById("montageBox").style.display = "block";
+                                document.getElementById("rahmenBox").style.display = "none";
+                                document.getElementById("rahmenInputBox").style.display = "none";
+                            } else {
+                                // ❌ Backend reported failure
+                                showErrorMessage(data.message || "Fehler beim Speichern.");
+                                console.error("Detail:", data.detail);
+                            }
+                            newTab.close(); // no need for tab in this case
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Fehler:", err);
+                    newTab.close();
+                    alert("Fehler beim Generieren des PDFs");
+                });
+        })
+        .catch(() => {
+            showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+            document.getElementById("RahmennummerForUnpack").focus();
+
+
+        });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("fahrradForm");
+
+            form.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // stop form from submitting
+
+                    const inputs = Array.from(form.querySelectorAll("input, select"));
+                    const index = inputs.indexOf(e.target);
+
+                    if (index > -1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+            });
+        });
+
+
+    </script>
+
+</head>
+<body>
+    <div class="container-fluid">
+
+        <div id="errorMessage" class="error-banner" style="display:none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorText"></span>
+            <span id="errorClose" onclick="hideErrorMessage()">×</span>
+        </div>
+        <div id="errorMessageForSendEmail" class="error-bannerForSendEmail" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorTextForSendEmail"></span>
+            <span id="errorCloseForSendEmail" onclick="hideErrorMessageForSendEmail()">×</span>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="d-flex justify-content-between align-items-center mt-2 me-4">
+                    <h3></h3>
+                    <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                        <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                    </h4>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    <div class="circle-button">
+                        <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="Assembly">
+                                <i class="bi bi-bicycle unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                        <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>*@
+
+
+                    }
+                    <div class="">
+                        <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="BikePassLog">
+                                <i class="bi bi-archive unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Push the following block to the bottom -->
+                    <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                        @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                        {
+                            <div class="register-button">
+                                <form action="@Url.Action("Register", "Account")">
+                                    <button type="submit" class="register-button" title="Register Neu">
+                                        <i class="bi bi-person-add"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Branches">
+                                        <i class="bi bi-card-list unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Rahmennummer">
+                                        <i class="bi bi-code unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+
+                        <div class="circle-button">
+                            <form action="@Url.Action("Logout", "Account")" method="post">
+                                @*@Html.AntiForgeryToken()*@
+                                <button type="submit" class="logout-button" title="Logout">
+                                    @ViewBag.UserName
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="mangel-modal-container" style="display: none;">
+                <div class="mangel-modal-content">
+                    <div class="modal-title-section">
+                        <h3 class="modal-title">Mangel melden</h3>
+                        <p class="modal-subtext">Fügen Sie hier einen optionalen Kommentar zum Mangel hinzu.</p>
+                    </div>
+                    <div class="modal-body">
+                        <textarea class="modal-textarea" placeholder="Bitte fügen Sie einen Kommentar hinzu..."></textarea>
+                        <div class="modal-upload-section">
+                            <label class="modal-upload-label">Bilder Hochladen</label>
+                            <div class="modal-upload-boxes">
+                                <!-- Each box triggers its hidden input -->
+                                <label class="upload-box">
+                                    <div class="preview-image">+</div>
+                                    <input type="file" accept="image/*" class="hidden-file" id="img1">
+                                </label>
+                                <label class="upload-box">
+                                    <div class="preview-image">+</div>
+                                    <input type="file" accept="image/*" class="hidden-file" id="img2">
+                                </label>
+                                <label class="upload-box">
+                                    <div class="preview-image">+</div>
+                                    <input type="file" accept="image/*" class="hidden-file" id="img3">
+                                </label>
+                                <label class="upload-box">
+                                    <div class="preview-image">+</div>
+                                    <input type="file" accept="image/*" class="hidden-file" id="img4">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-mangel-close modal-btn cancel">Zurück</button>
+                        <button type="button" class="modal-btn report">Melden</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content and right panel -->
+            <div class="col px-0">
+                <div class="row">
+                    <!-- Main content -->
+                    <div class="col-md-9">
+                        <div class="main-content">
+                            <div id="mainForm">
+                                <h4 class="mb-4"><strong>Lagerplätze</strong></h4>
+
+                                @foreach (var row in new[] { "A", "B" })
+                                {
+                                    <div class="d-flex flex-wrap mb-3 mt-4">
+                                        @foreach (var slot in Model.Where(s => s.RowGroup == row))
+                                        {
+                                            var cssClass = slot.IsOccupied
+                                                ? (slot.IsPriority ? "slot-taken priority-slot" : "slot-taken")
+                                                : "";
+
+                                            <div class="parking-slot @cssClass">
+                                                @slot.BoxName
+                                                @if (slot.IsPriority)
+                                                {
+                                                    <i class="bi bi-star-fill text-warning ms-1" style="font-size: 12px;"></i>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <div id="scanBikeBox" style="display:none;">
+                                <input type="text" name="BikeSerialNo" id="BikeSerialNo" class="fw-bold mt-5" placeholder="Scanne jetzt das Fahrrad" />
+                            </div>
+                            <div class="form-section" id="bikeInputForm" style="display:none;">
+                                <h2>Etiketten & Nummern</h2>
+
+                                <!-- Row with two inputs side by side -->
+                                <form id="fahrradForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 offset-md-2">
+                                            <div class="form-group">
+                                                <label for="rahmennummer">Rahmennummer <span id="rahmenStar" style="color:red">*</span></label>
+                                                <input type="text" class="form-control" name="rahmennummer" id="rahmennummer"
+                                                       oninput="validateFields()"
+                                                       onblur="checkRahmennummer()">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="Schlüsselnummer">Schlüsselnummer</label>
+                                                <input type="text" class="form-control" name="Schlüsselnummer" id="Schlüsselnummer" oninput="updatePreview('Schlüsselnummer')">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 offset-md-2">
+                                            <div class="form-group">
+                                                <label for="Akkunummer">Akkunummer <span id="akkuStar" style="color:red">*</span></label>
+                                                <input type="text" class="form-control" name="akkuNummer" id="Akkunummer" oninput="updatePreview('Akkunummer'); validateFields()">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="zubehoerTasche">Zubehör-Behälter Nr</label>
+                                                <input type="text" class="form-control" name="zubehoerTasche" id="zubehoerTasche" oninput="updatePreview('zubehoerTasche')">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 offset-md-2">
+                                            <div class="form-group">
+                                                <label for="Mechaniker">Monteur <span style="color:red">*</span></label>
+                                                <select id="mechanicDropdown" name="mechanicDropdown" class="form-control" onchange="validateFields()"></select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+
+                                <!-- Info Box at the bottom -->
+                                <div class="mt-4 p-3 border rounded text-center bg-light" id="notifyAdmin" style="font-size: 15px; display:none">
+                                    Hat sich die Logik der Rahmennummer geändert? Sag deinem Admin
+                                    <a href="#"
+                                       id="notifyAdminLink"
+                                       class="fw-bold"
+                                       style="color:#e1005a; text-decoration: underline;"
+                                       onclick="notifyAdminFrameNo(); return false;">
+                                        hier Bescheid.
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- Right panel -->
+                    <div class="col-md-3" id="SecondHomeScreen" style="display:none">
+                        <div class="right-panel">
+                            <div class="preview-section" id="previewSection" style="display:none">
+                                <h3 class="">Etiketten & Nummern drucken</h3>
+                                <div class="row mt-3">
+                                    <div class="col-md-2">
+                                        <span class="print-icon printIcons" onclick="printBarcodeFromPreview('preview-Seriennummer')" title="Drucken">🖨️</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="fw-bold mb-0">Seriennummer:</h6>
+                                        <p id="preview-Seriennummer">--</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <span class="print-icon printIcons" onclick="printBarcodeFromPreview('preview-Rahmennummer')" title="Drucken">🖨️</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="fw-bold mb-0">Rahmennummer:</h6>
+                                        <p id="preview-Rahmennummer">--</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <span class="print-icon printIcons" onclick="printBarcodeFromPreview('preview-Schlüsselnummer')" title="Drucken">🖨️</span>
+                                    </div>
+                                    <div class="col-md-10 ">
+                                        <h6 class="fw-bold mb-0">Schlüsselnummer:</h6>
+                                        <p id="preview-Schlüsselnummer">--</p>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <span class="print-icon printIcons" onclick="printBarcodeFromPreview('preview-Akkunummer')" title="Drucken">🖨️</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="fw-bold mb-0">Akkunummer:</h6>
+                                        <p id="preview-Akkunummer">--</p>
+
+                                    </div>
+                                </div>
+
+
+                                @*<div class="row">
+                                <div class="col-md-12">
+                                    <h6 class="fw-bold mb-0">Gabel-Nummer:</h6>
+                                    <p id="preview-gabelNummer">--</p>
+
+                                </div>
+                            </div>*@
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="fw-bold mb-0">Zubehör-Behälter Nr:</h6>
+                                        <p id="preview-zubehoerTasche">--</p>
+
+                                    </div>
+                                </div>
+
+                                <div id="">
+                                    <button type="button" id="printBtn" onclick="generateAndPrintPdf()" disabled class="btn btn-dark mt-3 w-100">
+                                        Fahrradpass Drucken <span class="print-icon" title="Drucken">🖨️</span>
+                                    </button>
+                                    <button type="button" id="completeJobBtn" onclick="completeJobButton()" disabled class="btn btn-dark mt-3 w-100">
+                                        Abschließen
+                                    </button>
+                                    <button type="button" class="btn-mangel-open btn mt-1 w-100">
+                                        <i class="bi bi-exclamation-triangle" style="color: #F85F68; font-size: 24px;"></i>
+                                        <span style="color: #F85F68; font-weight: bold; text-decoration: underline;">Mangel melden</span>
+                                    </button>
+                                </div>
+
+                            </div>
+
+
+
+                            <div id="bikeInfoBox" style="display:none;">
+                                <img id="bikeImage" src="" alt="Produktbild" style="width:270px; max-height:150px; margin-bottom:5px; display:none;" />
+                                <strong>Marke:</strong> <span id="brand"></span><br />
+                                <strong>Model:</strong> <span id="model"></span><br />
+                                <strong>Artikelnummer:</strong> <span id="articleNumber"></span><br />
+                                <strong>EAN:</strong> <span id="ean"></span>
+
+                                <div id="extraInfo" class="mt-3 mb-4">
+                                    @*<p style="cursor: pointer;" id="toggleInfo">
+                                    <i class="bi bi-info-circle m-1" style="font-size: 15px;"></i>
+                                    <strong>Zusätzliche Informationen</strong>
+                                    <i id="toggleInfoIcon" class="bi bi-chevron-down m-1" style="font-size: 15px;"></i>
+                                </p>*@
+                                    <ul id="extraInfoList" style="list-style: none;padding: 0;">
+                                        <li><strong>Kategorie:</strong> <span id="kategorie"></span></li>
+                                        <li><strong>Rahmentyp:</strong> <span id="rahmentyp"></span></li>
+                                        <li><strong>Rahmenmaterial:</strong> <span id="rahmenmaterial"></span></li>
+                                        <li><strong>Schaltung:</strong> <span id="schaltung"></span></li>
+                                        <li><strong>Radgröße:</strong> <span id="radgroesse"></span></li>
+                                        <li><strong>Rahmenhöhe:</strong> <span id="rahmenhoehe"></span></li>
+                                        <li><strong>Farbe:</strong> <span id="farbe"></span></li>
+                                        <li id="akkuContainer"><strong>Akku:</strong> <span id="akku"></span></li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" name="bikeId" id="bikeId" />
+                                <input type="hidden" name="bikeBrand" id="bikeBrand" />
+                                <input type="hidden" name="bikeFrameNr" id="bikeFrameNr" />
+                                <input type="hidden" name="getBarcodeFromApiAssembly" id="getBarcodeFromApiAssembly" />
+                                <input type="hidden" id="isEbike" name="isEbike" />
+                                <input type="hidden" id="isRCategory" name="isRCategory" />
+                                <input type="hidden" name="selectedMechanic" id="selectedMechanic" />
+
+                                <div class="form-check m-0 p-0" id="showBoxNameHeading">
+                                    <h4 class="">Hole das Fahrrad vom Stellplatz <span class="fw-bold" id="assignedBoxName"></span> </h4>
+                                </div>
+
+                                <button type="button" id="btnFahrradGeholt" class="btn btn-dark mt-3 w-100" onclick="showBikeScanBox()">
+                                    Fahrrad geholt <i id="tickIcon" class="bi bi-check2"></i>
+                                </button>
+                                <div id="isDifficultCheckboxContainer" class="form-check mt-1" style="display:none">
+                                    <input class="form-check-input" name="isDifficultCheckbox" type="checkbox" id="isDifficultCheckbox" />
+                                    <label class="form-check-label" for="isDifficultCheckbox">
+                                        Schweres Rad
+                                    </label>
+                                </div>
+                                <div id="scanBikeDataExist" style="display:none">
+                                    <button type="button" class="btn btn-dark mt-1 w-100" onclick="showPrintDataForm()">
+                                        Daten Korrekt <i id="tickIcon" class="bi bi-check2"></i>
+                                    </button>
+                                    <button id="btnDataNotCorrect" type="button" class="btn btn-danger mt-1 w-100" onclick="inCompleteJobButton()">
+                                        Daten nicht Korrekt <i id="tickIcon" class="bi bi-check2"></i>
+                                    </button>
+                                    <button type="button" class="btn-mangel-open btn mt-0 w-100">
+                                        <i class="bi bi-exclamation-triangle" style="color: #F85F68; font-size: 24px;"></i>
+                                        <span style="color: #F85F68; font-weight: bold; text-decoration: underline;">Mangel melden</span>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            <div id="bikeInfoBoxForUnpack" style="display:none;">
+                                <img id="bikeImageUnpack" src="" alt="Produktbild" style="width:270px; height:150px; margin-bottom:5px; display:none;" />
+                                <strong>Marke:</strong> <span id="brandUnpack"></span><br />
+                                <strong>Model:</strong> <span id="modelUnpack"></span><br />
+                                <strong>Artikelnummer:</strong> <span id="articleNumberUnpack"></span><br />
+                                <strong>EAN:</strong> <span id="eanUnpack"></span>
+
+                                <input type="hidden" id="getBarcodeFromAPIUnpack" />
+                                <input type="hidden" id="bikeBrandUnpack" />
+
+                                <div id="extraInfoUnpack" class="mt-3 mb-0">
+
+                                    <ul id="extraInfoListUnpack" style="list-style: none; padding: 0">
+                                        <li><strong>Kategorie:</strong> <span id="kategorieUnpack"></span></li>
+                                        <li><strong>Rahmentyp:</strong> <span id="rahmentypUnpack"></span></li>
+                                        <li><strong>Rahmenmaterial:</strong> <span id="rahmenmaterialUnpack"></span></li>
+                                        <li><strong>Schaltung:</strong> <span id="schaltungUnpack"></span></li>
+                                        <li><strong>Radgröße:</strong> <span id="radgroesseUnpack"></span></li>
+                                        <li><strong>Rahmenhöhe:</strong> <span id="rahmenhoeheUnpack"></span></li>
+                                        <li><strong>Farbe:</strong> <span id="farbeUnpack"></span></li>
+                                        <li><strong id="akkuHeadUnpack">Akku:</strong> <span id="akkuUnpack"></span></li>
+                                    </ul>
+                                    <input class="form-check-input" type="checkbox" id="EbikeCheckboxUnpack" style="display:none" />
+                                </div>
+
+                                <div id="rahmenInputBox" class="mt-0">
+                                    <label class="fw-bold">Rahmennummer</label>
+                                    <input type="text" name="RahmennummerForUnpack" id="RahmennummerForUnpack" style="height:40px" />
+                                </div>
+
+                                <div id="montageBox" style="display:none">
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="priorityCheckbox" />
+                                        <label class="form-check-label" for="priorityCheckbox">
+                                            Hohe Priorität
+                                        </label>
+                                    </div>
+
+
+                                    <button type="button" class="btn btn-dark mt-1 w-100" onclick="handleWeiterClickForUnpack()">
+                                        Rad zur Montage
+                                    </button>
+                                    <button type="button" id="btnWarenausgang" class="btn btn-light mt-1 w-100" onclick="handleWeiterClickUnpackingWithFrameNumber()">
+                                        Rad zum Warenausgang
+                                    </button>
+                                </div>
+
+                                <div id="rahmenBox">
+
+                                    <button type="button" id="ohneRahmenButton" class="btn btn-dark mt-1 w-100" onclick="showMontageBox()">
+                                        Ohne Rahmennummer weiter
+                                    </button>
+                                    <button type="button" id="printButton" class="btn btn-light mt-1 w-100" disabled onclick="printBarcode()">
+                                        Drucken
+                                    </button>
+                                </div>
+
+
+                            </div>
+                            <div id="assigned-box-panel" style="display: none;">
+                                <!-- HIDE by default -->
+                                <div style="height:400px">
+                                    <h3>Bring das Fahrrad zum Stellplatz:</h3>
+                                    <div id="assigned-box" class="assigned-box-style"></div>
+                                </div>
+
+                                <button type="button" id="closeButton" class="btn btn-dark mt-3 w-100">
+                                    Abschließen <i id="tickIcon" class="bi bi-check2"></i>
+                                </button>
+                            </div>
+                            <div id="assigned-box-panel-unpackwithframe" style="display: none;">
+                                <!-- HIDE by default -->
+                                <div style="height:400px">
+                                    <h3>Bring das Fahrrad zum Warenausgang:</h3>
+                                </div>
+
+                                <button type="button" id="closeButtonunpackwithframe" class="btn btn-dark mt-3 w-100">
+                                    Abschließen <i id="tickIcon" class="bi bi-check2"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <!-- Right side (Scan + Montage job) -->
+                    <div class="col-md-3 d-flex flex-column gap-4">
+
+                        <!-- Scan Box -->
+                        <div class="unpack-panel" id="homeScreenUnPack">
+                            <form asp-controller="Scanner" asp-action="Scan" method="post" id="scanForm" class="d-flex flex-column h-100">
+                                <h4 class="fw-bold text-center">Auspacken</h4>
+                                <input type="text" id="barcodeInput" name="barcode"
+                                       placeholder="Bitte scanne das Fahrrad"
+                                       class="form-control mt-auto" autofocus />
+                            </form>
+                        </div>
+
+                        <!-- Montage Job Box -->
+                        <div class="assembly-panel" id="homeScreenAssembly">
+                            <h4 class="fw-bold text-center">Montage</h4><br /><br /><br /><br /><br /><br />
+                            <button onclick="handleWeiterClick()"
+                                    class="btn btn-dark w-100 fw-bold mt-auto">
+                                Neuer Montage-Job +
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

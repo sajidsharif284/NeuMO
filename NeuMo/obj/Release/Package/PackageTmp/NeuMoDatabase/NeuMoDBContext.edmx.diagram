@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="9eb79d521375498d8799b566d1bd716e" Name="Diagram1">
+        <EntityTypeShape EntityType="NeuMoModel.tbl_StorageGrid" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_FrameNumberPattern" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_BikePlacements" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_Branches" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NeuMoModel.Users" Width="1.5" PointX="1" PointY="1" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_Company" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_BikePassPrint_Log" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="NeuMoModel.vw_NeumoProductDetails" Width="1.875" PointX="7.75" PointY="3.75" />
+        <EntityTypeShape EntityType="NeuMoModel.tbl_BrandExtension" Width="1.5" PointX="3.375" PointY="7.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

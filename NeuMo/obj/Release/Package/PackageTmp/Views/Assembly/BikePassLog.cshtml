@@ -1,0 +1,1297 @@
+﻿@*@model IEnumerable<NeuMo.NeuMoDatabase.tbl_BikePassPrint_Log>*@
+@using PagedList.Mvc;
+@using PagedList;
+@model IPagedList<NeuMo.NeuMoDatabase.tbl_BikePassPrint_Log>
+
+
+@{
+    ViewBag.Title = "FahrradPassLog";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>FahrradPassLog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/gh/AmagiTech/JSLoader/amagiloader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+    <style>
+        body {
+            background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100vh;
+        }
+
+        .custom-sidebar {
+            width: 50px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #e1005a;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            font-size: 22px;
+            color: #eaa;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .unPackerIcon {
+            font-size: 22px;
+            color: red;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+
+        .circle-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fdd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+        .register-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+
+        .logout-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e1005a;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .reprint-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e1005a;
+            cursor: pointer;
+        }
+
+        .custom-table-wrapper {
+            max-height: 570px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+
+        }
+
+            /* First header row (column names) */
+            .custom-table-wrapper thead tr:first-child th {
+                position: sticky;
+                top: 0;
+                background-color: #f8f9fa;
+                z-index: 3;
+                height: 40px;
+            }
+
+            /* Second header row (search inputs) */
+            .custom-table-wrapper thead tr:nth-child(2) th {
+                position: sticky;
+                top: 40px; /* match the height of the first header row */
+                background-color: #f8f9fa;
+                z-index: 2;
+                height: 70px;
+            }
+
+            /* Optional scrollbar styling */
+            .custom-table-wrapper::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .custom-table-wrapper::-webkit-scrollbar-thumb {
+                background: #ccc;
+                border-radius: 4px;
+            }
+
+
+
+
+
+        .form-check {
+            margin-top: 15px; /* spacing for checkbox */
+        }
+
+        button.btn {
+            margin-top: 15px; /* spacing for button */
+        }
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 50px;
+            min-height: 80vh;
+        }
+
+        .right-panel {
+            background-color: #F4F4F4;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 50px 20px 0px 0px;
+            /* min-height: 75vh; */
+            min-height: 80vh; /* fix height so child flex 100% works */
+            display: flex; /* add flex to help layout children */
+            flex-direction: column;
+        }
+
+        #homeScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* push content apart vertically */
+            flex-grow: 1; /* fill vertical space */
+        }
+
+
+        #extraInfo p {
+            border-bottom: 1px solid #ccc;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #extraInfo {
+            height: 180px;
+        }
+
+
+        .error-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: red;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            z-index: 9999;
+        }
+
+            .error-banner i {
+                margin-right: 10px;
+                font-size: 22px;
+            }
+
+        #errorText {
+            flex-grow: 1;
+        }
+
+        #errorClose {
+            cursor: pointer;
+            font-weight: bold;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+
+
+
+        .label {
+            font-weight: bold;
+        }
+
+        .custom-timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .custom-timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 40px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -23px;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .timeline-details {
+            margin-top: 2px;
+        }
+
+        .rePrintIcon {
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        .pagination-container {
+           
+        }
+
+        /* Flex container with spacing between boxes */
+        .pagination.custom-pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px; /* spacing between boxes */
+            list-style: none;
+            padding-left: 0;
+        }
+
+            /* Each page item box */
+            .pagination.custom-pagination li.page-item {
+                display: inline-block;
+            }
+
+                /* Page number boxes */
+                .pagination.custom-pagination li.page-item a,
+                .pagination.custom-pagination li.page-item span {
+                    display: inline-block;
+                    min-width: 40px;
+                    height: 40px;
+                    line-height: 38px;
+                    text-align: center;
+                    border-radius: 8px;
+                    border: 1px solid #dee2e6;
+                    background-color: #ffffff;
+                    color: #0d6efd;
+                    font-weight: 500;
+                    text-decoration: none;
+                    transition: all 0.25s ease-in-out;
+                }
+
+                    /* Hover effect */
+                    .pagination.custom-pagination li.page-item a:hover {
+                        background-color: #0d6efd;
+                        color: #fff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 3px 6px rgba(13, 110, 253, 0.25);
+                    }
+
+            /* ✅ Active / Selected page number */
+            .pagination.custom-pagination li.active a,
+            .pagination.custom-pagination li.active span {
+                background-color: #0d6efd !important;
+                color: #fff !important;
+                border-color: #0d6efd !important;
+                font-weight: 600;
+                box-shadow: 0 3px 6px rgba(13, 110, 253, 0.35);
+            }
+
+
+        
+    </style>
+    <script>
+       
+        $(document).ready(function () {
+            $('.column-search').on('keyup', function () {
+                var index = $(this).parent().index();
+                var value = $(this).val().toLowerCase();
+
+                $('table tbody tr').filter(function () {
+                    $(this).toggle(
+                        $(this).find('td').eq(index).text().toLowerCase().indexOf(value) > -1
+                    );
+                });
+            });
+        });
+
+        let errorTimeout;
+
+function showErrorMessage(message) {
+    clearTimeout(errorTimeout);
+    const banner = document.getElementById("errorMessage");
+    const text = document.getElementById("errorText");
+    text.textContent = message;
+    banner.style.display = "flex";
+    errorTimeout = setTimeout(() => {
+        hideErrorMessage();
+    }, 8000);
+}
+
+function hideErrorMessage() {
+    document.getElementById("errorMessage").style.display = "none";
+
+}
+
+function rePrintBarcodeFromPreview(previewId) {
+    //const value = document.getElementById(previewId)?.innerText.trim();
+    const element = document.getElementById(previewId);
+    const value = (element.tagName === "INPUT" || element.tagName === "TEXTAREA")
+        ? element.value.trim()
+        : element.innerText.trim();
+    if (!value || value === "--") return;
+
+    const formData = new FormData();
+    formData.append("headingValue", previewId);
+    formData.append("barcodeValue", value);
+
+    //const newTab = window.open();
+    //if (!newTab) {
+    //    alert("Bitte Pop-ups im Browser erlauben.");
+    //    return;
+    //}
+
+    // Open placeholder tab immediately (browser won’t block this)
+    const newTab = window.open("", "_blank");
+
+    fetch('@Url.Action("GenerateBarcodePdf", "Assembly")', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            debugger;
+            if (!response.ok) throw new Error("Server error");
+
+
+            const contentType = response.headers.get("content-type") || "";
+
+            if (contentType.includes("application/pdf")) {
+                return response.blob().then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    newTab.document.write(`
+                      <html>
+                      <head><title>Fahrrad-Pass</title></head>
+                      <body style="margin:0">
+                      <div style="background-color:red; color:white; font-weight:bold;
+                       text-align:center; padding:15px; font-size:18px;">
+                       Drucker Einstellung fehlt
+                        </div>
+                        <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                        </body>
+                        </html>
+                         `);
+                    newTab.document.close();
+                });
+            } else {
+                // ✅ Printer set → just show message
+                return response.json().then(data => {
+                    if (data.success) {
+                        //showErrorMessageForSendEmail("Etikett wurde gedruckt.");
+                        alert("Etikett wurde gedruckt");
+                    } else {
+                        // ❌ Backend reported failure
+                        showErrorMessage(data.message || "Fehler beim Speichern.");
+                        console.error("Detail:", data.detail);
+                    }
+                    newTab.close(); // no need for tab in this case
+                });
+            }
+        })
+        .catch(err => {
+            console.error("Fehler:", err);
+            newTab.close();
+            alert("Fehler beim Generieren des PDFs");
+        });
+}
+
+
+
+                function getDataForReprint(button) {
+    debugger;
+    AmagiLoader.show();
+    const id = button.dataset.id;
+    const frameNum = button.dataset.frame;
+
+    fetch('@Url.Action("getDataForReprint", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'id=' + encodeURIComponent(id) + '&frameNo=' + encodeURIComponent(frameNum)
+    })
+    .then(response => response.json())
+    .then(data => {
+        debugger;
+        if (!data.success) {
+            AmagiLoader.hide();
+            showErrorMessage(data.message);
+            return;
+        }
+
+        const bike = data.data;
+        document.getElementById("brand").innerText = bike.Brand;
+        document.getElementById("model").innerText = bike.Description;
+        document.getElementById("articleNumber").innerText = bike.No_;
+        document.getElementById("ean").innerText = bike.EAN;
+
+        document.getElementById("kategorie").innerText = bike.Item_Category_Code;
+        document.getElementById("rahmentyp").innerText = bike.Frame_Type;
+        document.getElementById("rahmenmaterial").innerText = bike.Frame_Material;
+        document.getElementById("schaltung").innerText = bike.Gearshift;
+        document.getElementById("radgroesse").innerText = bike.Wheel_Size;
+        document.getElementById("rahmenhoehe").innerText = bike.Frame_Height;
+        document.getElementById("farbe").innerText = bike.ColourForName;
+        document.getElementById("bikeBrand").value = bike.Brand;
+
+        if (bike.E_Bike_Engine?.trim()) {
+            document.getElementById("akku").innerText = bike.E_Bike_Engine;
+        } else {
+            document.getElementById("akkuHead").style.display = "none";
+        }
+
+        if (data.imageUrl) {
+            const img = document.getElementById("bikeImage");
+            img.src = data.imageUrl;
+            img.style.display = 'block';
+        }
+
+        if (data.assembleBikeData.Status !== "Logix") {
+
+            document.getElementById("HistoryData").style.display = "block";
+
+            const rawDate = data.assembleBikeData.AssembleEndTime;
+            const timestamp = parseInt(rawDate.replace(/\/Date\((\d+)\)\//, '$1'));
+            const date = new Date(timestamp);
+            const formatted = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()} um ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')} Uhr`;
+            document.getElementById('assemblerDate').textContent = formatted;
+            document.getElementById('assemblerName').textContent = "Montiert von " + data.assemblerName;
+
+            const assembleBikeData = data.assembleBikeData;
+            if (data.unpackerName !== "") {
+                document.getElementById("unpackerHistory").style.display = "block";
+
+                const rawDateTwo = assembleBikeData.DateTime;
+                const timestampTwo = parseInt(rawDateTwo.replace(/\/Date\((\d+)\)\//, '$1'));
+                const dateTwo = new Date(timestampTwo);
+                const formattedTwo = `${String(dateTwo.getDate()).padStart(2, '0')}.${String(dateTwo.getMonth() + 1).padStart(2, '0')}.${dateTwo.getFullYear()} um ${String(dateTwo.getHours()).padStart(2, '0')}:${String(dateTwo.getMinutes()).padStart(2, '0')} Uhr`;
+                document.getElementById('unpackerDate').textContent = formattedTwo;
+                document.getElementById('unpackerName').textContent = "Auspacker von " + data.unpackerName;
+            }
+        }
+        else {
+            document.getElementById("btnSubmitRahmen").style.display = "none";
+            
+        }
+        
+
+
+
+        const checkbox = document.getElementById("isDifficultCheckbox");
+        checkbox.checked = data.assembleBikeData.IsDifficult;
+        checkbox.disabled = true;
+
+        const navisondata = data.navisionData;
+        document.getElementById("rePrintPreview-Seriennummer").innerText = navisondata[0].SerialNum;
+        document.getElementById("rePrintPreview-Akkunummer").value = navisondata[0].BatteryNum;
+        document.getElementById("rePrintPreview-Rahmennummer").value = navisondata[0].FrameNum;
+        document.getElementById("rePrintPreview-Schlüsselnummer").value = data.assembleBikeData.KeyNumber || '--';
+        document.getElementById("rePrintPreview-zubehorTasche").value = navisondata[0].AccessoryBag;
+
+        // Hidden fields
+        document.getElementById('rePrintRahmennummer').value = navisondata[0].FrameNum || '';
+        document.getElementById('rePrintSchlüsselnummer').value = data.assembleBikeData.KeyNumber || '';
+        document.getElementById('rePrintAkkunummer').value = navisondata[0].BatteryNum || '';
+        document.getElementById('rePrintZubehoerTasche').value = navisondata[0].AccessoryBag || '';
+        document.getElementById('rePrintGabelNummer').value = navisondata[0].ForkNum || '';
+        document.getElementById('rePrintBikeId').value = navisondata[0].SerialNum || '';
+        document.getElementById('rePrintBearbeiter').value = data.employeeNumber || '';
+
+        const formData = new URLSearchParams();
+        formData.append('rahmennummer', navisondata[0].FrameNum || '');
+        formData.append('Schlüsselnummer', data.assembleBikeData.KeyNumber || '');
+        formData.append('Akkunummer', navisondata[0].BatteryNum || '');
+        formData.append('zubehoerTasche', navisondata[0].AccessoryBag || '');
+        formData.append('gabelNummer', navisondata[0].ForkNum || '');
+        formData.append('bikeId', navisondata[0].SerialNum || '');
+        formData.append('barcode', bike.Bar_Code || '');
+        formData.append('bearbeiterName', data.employeeNumber || '');
+
+        formData.append('preview',  '1');
+
+        fetch('@Url.Action("RePrintFahrradPass", "Assembly")', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('PDF generation failed');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            document.getElementById('fahrradPassIframe').src = url;
+        })
+        .catch(error => {
+            AmagiLoader.hide();
+            console.error('Error generating preview:', error);
+            alert("Fahrradpass konnte nicht generiert werden.");
+        });
+
+        document.getElementById("RePrintingParentData").style.display = "block";
+        document.getElementById("isDifficultCheckboxContainer").style.display = "block";
+        document.getElementById("BikePassLogData").style.display = "none";
+        AmagiLoader.hide();
+    })
+        .catch((error) => {
+            debugger;
+            AmagiLoader.hide();
+        showErrorMessage("Serverfehler. Bitte später erneut versuchen.");
+    });
+}
+
+function rePrintPdf() {
+    debugger;
+    const rahmen = document.getElementById("rePrintRahmennummer").value;
+    const schluessel = document.getElementById("rePrintSchlüsselnummer").value;
+    const akku = document.getElementById("rePrintAkkunummer").value;
+    const zubehoer = document.getElementById("rePrintZubehoerTasche").value;
+    const gabel = document.getElementById("rePrintGabelNummer").value;
+    const bikeId = document.getElementById("rePrintBikeId").value;
+    const bearbeiter = document.getElementById("rePrintBearbeiter").value;
+
+    const formData = new FormData();
+    formData.append('rahmennummer', rahmen);
+    formData.append('Schlüsselnummer', schluessel);
+    formData.append('Akkunummer', akku);
+    formData.append('zubehoerTasche', zubehoer);
+    formData.append('gabelNummer', gabel);
+    formData.append('bikeId', bikeId);
+    formData.append('bearbeiterName', bearbeiter);
+
+    //const newTab = window.open();
+    //if (!newTab) {
+    //    alert("Bitte Pop-ups im Browser erlauben.");
+    //    return;
+    //}
+
+    // Open placeholder tab immediately (browser won’t block this)
+    const newTab = window.open("", "_blank");
+
+    fetch('@Url.Action("RePrintFahrradPass", "Assembly")', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            debugger;
+            if (!response.ok) throw new Error("Server error");
+
+
+            const contentType = response.headers.get("content-type") || "";
+
+            if (contentType.includes("application/pdf")) {
+                return response.blob().then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    newTab.document.write(`
+                           <html>
+                           <head><title>Fahrrad-Pass</title></head>
+                           <body style="margin:0">
+                           <div style="background-color:red; color:white; font-weight:bold;
+                             text-align:center; padding:15px; font-size:18px;">
+                             Drucker Einstellung fehlt
+                             </div>
+                            <embed width="100%" height="100%" src="${url}" type="application/pdf" />
+                            </body>
+                           </html>
+                             `);
+                    newTab.document.close();
+                });
+            } else {
+                // ✅ Printer set → just show message
+                return response.json().then(data => {
+                    if (data.success) {
+                        //showErrorMessageForSendEmail("Fahrradpass wurde gedruckt.");
+                        alert("Fahrradpass wurde gedruckt");
+                    } else {
+                        // ❌ Backend reported failure
+                        showErrorMessage(data.message || "Fehler beim Speichern.");
+                        console.error("Detail:", data.detail);
+                    }
+                    newTab.close(); // no need for tab in this case
+                });
+            }
+        })
+        .catch(err => {
+            console.error("Fehler:", err);
+            newTab.close();
+            alert("Fehler beim Generieren des PDFs");
+        });
+        }
+
+
+
+        function getBikepassPdf() {
+            debugger;
+            const rahmen = document.getElementById("rePrintRahmennummer").value;
+            const schluessel = document.getElementById("rePrintSchlüsselnummer").value;
+            const akku = document.getElementById("rePrintAkkunummer").value;
+            const zubehoer = document.getElementById("rePrintZubehoerTasche").value;
+            const gabel = document.getElementById("rePrintGabelNummer").value;
+            const bikeId = document.getElementById("rePrintBikeId").value;
+            const bearbeiter = document.getElementById("rePrintBearbeiter").value;
+
+            const formData = new FormData();
+            formData.append('rahmennummer', rahmen);
+            formData.append('Schlüsselnummer', schluessel);
+            formData.append('Akkunummer', akku);
+            formData.append('zubehoerTasche', zubehoer);
+            formData.append('gabelNummer', gabel);
+            formData.append('bikeId', bikeId);
+            formData.append('preview', '1');
+            formData.append('bearbeiterName', bearbeiter);
+
+            const newTab = window.open();
+            if (!newTab) {
+                alert("Bitte Pop-ups im Browser erlauben.");
+                return;
+            }
+
+    fetch('@Url.Action("RePrintFahrradPass", "Assembly")', {
+        method: 'POST',
+        body: formData
+    })
+                .then(response => {
+                    if (!response.ok) throw new Error("Server error");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+
+                    // Write HTML that embeds the PDF and triggers print
+                    newTab.document.write(`
+                    <html>
+                    <head>
+                       <title>Fahrrad-Pass</title>
+                       </head>
+                      <body style="margin:0">
+                      <embed width="100%" height="100%" src="${url}" type="application/pdf" onload="window.print()" />
+
+                      </body>
+                     </html>
+                     `);
+
+                    newTab.document.close();
+
+                })
+                .catch(err => alert("Fehler beim Generieren des PDFs"));
+        }
+
+        function submitRahmenNumber() {
+    debugger;
+            AmagiLoader.show();
+    const rahmenInput = document.getElementById("rePrintPreview-Rahmennummer");
+            const bikeIdInput = document.getElementById("rePrintPreview-Seriennummer").innerText;
+
+    if (!rahmenInput || !bikeIdInput) {
+        console.error("Rahmennummer or BikeId input not found.");
+        return;
+    }
+
+    const rahmenNumber = rahmenInput.value.trim();
+            const bikeId = bikeIdInput;
+            const akku = document.getElementById("rePrintPreview-Akkunummer").value;
+            const key = document.getElementById("rePrintPreview-Schlüsselnummer").value;
+            const zubehor = document.getElementById("rePrintPreview-zubehorTasche").value;
+
+
+
+    if (!rahmenNumber) {
+        AmagiLoader.hide();
+        alert("Bitte geben Sie eine gültige Rahmennummer ein!");
+        return;
+    }
+
+    if (!bikeId) {
+        AmagiLoader.hide();
+        alert("Bike ID fehlt — bitte überprüfen!");
+        return;
+    }
+
+    fetch('@Url.Action("UpdateRahmennummer", "Assembly")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            rahmennummer: rahmenNumber,
+            bikeId: bikeId,
+            akku: akku,
+            key: key,
+            zubehor: zubehor
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            AmagiLoader.hide();
+            throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            AmagiLoader.hide();
+            alert(`✅ Rahmennummer '${rahmenNumber}' erfolgreich gespeichert (Seriennummer: ${bikeId}).`);
+            // Refresh the page after the user clicks OK
+            location.reload();
+        } else {
+            AmagiLoader.hide();
+            alert("⚠️ Fehler: " + (data.message || "Unbekannter Fehler."));
+        }
+    })
+    .catch(error => {
+        AmagiLoader.hide();
+        console.error('❌ Error:', error);
+        alert('Fehler beim Speichern der Rahmennummer.');
+    });
+}
+
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+                // Always go back to first page
+                if (window.location.search.includes("page=")) {
+                    window.location.href = window.location.pathname + "?page=1";
+                }
+            }
+        });
+
+    </script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div id="errorMessage" class="error-banner" style="display:none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="errorText"></span>
+            <span id="errorClose" onclick="hideErrorMessage()">×</span>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    @if (ViewBag.Flow != null && ViewBag.Flow == "Standard, Feste Auspacker & Montage")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "Direktmontage, Nur Monteure")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("DirektMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="DirektMontage">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "FlexModell, Flexible Auspacker & Monteur")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                                <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                        <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>*@
+
+
+                    }
+                    <div class="circle-button">
+                        <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="BikePassLog">
+                                <i class="bi bi-archive unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Push the following block to the bottom -->
+                    <div class="mt-auto d-flex flex-column align-items-center gap-2">
+
+                        @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                        {
+                            <div class="register-button">
+                                <form action="@Url.Action("Register", "Account")">
+                                    <button type="submit" class="register-button" title="Register Neu">
+                                        <i class="bi bi-person-add"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Branches">
+                                        <i class="bi bi-card-list unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="">
+                                <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="Rahmennummer">
+                                        <i class="bi bi-code unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                        <div class="circle-button">
+                            <form action="@Url.Action("Logout", "Account")" method="post">
+                                @*@Html.AntiForgeryToken()*@
+                                <button type="submit" class="logout-button" title="Logout">
+                                    @ViewBag.UserName
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-11 table-container" id="BikePassLogData" style="">
+                <div class="mt-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>FahrradPassLog</h3>
+
+                        <!-- ⭐ TOP RIGHT: Branch Name -->
+                        <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                            <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                        </h4>
+
+                    </div>
+
+
+
+                </div>
+                <!-- 📄 Pagination Controls -->
+                <!-- 📄 Pagination Controls -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <!-- Pagination -->
+                    <div class="pagination-container d-flex align-items-center">
+                        @Html.PagedListPager(
+                            Model,
+                            page => Url.Action("BikePassLog", new { page, search = ViewBag.CurrentFilter, branch = ViewBag.CurrentBranch }),
+                            new PagedListRenderOptions
+                            {
+                                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                                DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                                MaximumPageNumbersToDisplay = 7,
+                                UlElementClasses = new[] { "pagination", "pagination-lg", "custom-pagination" },
+                                LiElementClasses = new[] { "page-item" }
+                            })
+                    </div>
+
+                    <!-- Search Form -->
+                    <form method="get" action="@Url.Action("BikePassLog")" class="d-flex align-items-center">
+                        <!-- 🏢 Branch dropdown -->
+                        <select name="branch" class="form-select me-2 w-auto" style="height:40px;">
+                            <option value="">Alle Filialen</option>
+                            @foreach (var b in ViewBag.Branches as List<string>)
+                            {
+                                <option value="@b" @(ViewBag.CurrentBranch == b ? "selected" : "")>@b</option>
+                            }
+                        </select>
+
+                        <input type="text"
+                               name="search"
+                               value="@ViewBag.CurrentFilter"
+                               class="form-control me-2"
+                               style="height:40px; width:250px;"
+                               placeholder="Seriennummer oder RahmenNr suchen..." />
+
+                        <button type="submit"
+                                class="btn btn-primary mb-3"
+                                style="height:40px">
+                            🔍 Suchen
+                        </button>
+                        <a href="@Url.Action("BikePassLog")" class="btn btn-secondary ms-2" style="height:40px;">
+                            ✖ Clear
+                        </a>
+                    </form>
+                </div>
+
+                <!-- User Table -->
+                <!-- Scrollable Table with Sticky Header -->
+                <div class="custom-table-wrapper">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Date)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Barcode)</th>
+                                <th>Seriennummer</th>
+                                <th>RahmenNr</th>
+                                <th>Filiale</th>
+                                <th>Bearbeiter</th>
+                                <th>Monteur</th>
+                                <th>ZubehörNr</th>
+                                <th>AkkuNr</th>
+                                <th>SchlüsselNr</th>
+                                <th></th>
+                            </tr>
+                            @*<tr>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                        <th><input type="text" class="form-control form-control-sm column-search" /></th>
+                    </tr>*@
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@(item.Date.HasValue ? item.Date.Value.ToString("dd.MM.yyyy") : "")</td>
+                                        <td>@Html.DisplayFor(m => item.Barcode)</td>
+                                        <td>@Html.DisplayFor(m => item.SerialNumber)</td>
+                                        <td>@Html.DisplayFor(m => item.Frame_Num)</td>
+                                        <td>@Html.DisplayFor(m => item.BranchName)</td>
+                                        <td>@Html.DisplayFor(m => item.Monteur)</td>
+                                        <td>@Html.DisplayFor(m => item.Mechaniker)</td>
+                                        <td>@Html.DisplayFor(m => item.AccesoryBag)</td>
+                                        <td>@Html.DisplayFor(m => item.BatteryNumber)</td>
+                                        <td>@Html.DisplayFor(m => item.KeyNumber)</td>
+                                        <td>
+                                            <button type="button" id="reprintAllData"
+                                                    onclick="getDataForReprint(this)"
+                                                    data-id="@item.Id"
+                                                    data-frame="@item.Frame_Num"
+                                                    class="reprint-button"
+                                                    style="height:10px"
+                                                    title="Fahrradpass & Etikett erneut drucken">
+                                                <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="11" class="text-center">Keine Daten gefunden.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+
+                @if (TempData["AlertMessage"] != null)
+                {
+                    <script type="text/javascript">
+                       alert('@TempData["AlertMessage"]');
+                    </script>
+                }
+            </div>
+
+            <!-- Main content and right panel -->
+            <div class="col px-0" id="RePrintingParentData" style="display:none">
+                <div class="row">
+                    <!-- Main content -->
+                    <div class="col-md-9">
+                        <div class="main-content">
+
+                            <div class="rePrint">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="fw-bold mb-0">Etiketten & Nummern drucken</h4>
+                                </div>
+                                <div id="rePrintForm" style="">
+                                    <!-- Icons + Labels -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="print-icon rePrintIcon" onclick="rePrintBarcodeFromPreview('rePrintPreview-Seriennummer')" title="Drucken">🖨️</span>
+                                                </div>
+                                                <div class="col-md-10 ml-5">
+                                                    <strong>
+                                                        Seriennummer:
+                                                    </strong>
+                                                    <p id="rePrintPreview-Seriennummer">--</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="print-icon rePrintIcon" onclick="rePrintBarcodeFromPreview('rePrintPreview-Schlüsselnummer')" title="Drucken">🖨️</span>
+                                                </div>
+                                                <div class="col-md-10 ml-5">
+                                                    <strong>
+                                                        Schlüsselnummer:
+                                                    </strong>
+                                                    @*<p id="rePrintPreview-Schlüsselnummer">--</p>*@
+                                                    <input type="text" id="rePrintPreview-Schlüsselnummer" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-md-2">
+                                                    
+                                                </div>
+                                                <div class="col-md-10 ml-5">
+                                                    <strong>
+                                                        Zubehör-Tasche:
+                                                    </strong>
+                                                    @*<p id="rePrintPreview-zubehorTasche">--</p>*@
+                                                    <input type="text" id="rePrintPreview-zubehorTasche" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="print-icon rePrintIcon" onclick="rePrintBarcodeFromPreview('rePrintPreview-Rahmennummer')" title="Drucken">🖨️</span>
+                                                </div>
+                                                <div class="col-md-10 ml-5">
+                                                    <strong>
+                                                        Rahmennummer:
+                                                    </strong>
+                                                    @*<p id="rePrintPreview-Rahmennummer">--</p>*@
+                                                    <input type="text" id="rePrintPreview-Rahmennummer" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="print-icon rePrintIcon" onclick="rePrintBarcodeFromPreview('rePrintPreview-Akkunummer')" title="Drucken">🖨️</span>
+                                                </div>
+                                                <div class="col-md-10 ml-5">
+                                                    <strong>
+                                                        Akkunummer:
+                                                    </strong>
+                                                    @*<p id="rePrintPreview-Akkunummer">--</p>*@
+                                                    <input type="text" id="rePrintPreview-Akkunummer" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+
+                                                </div>
+                                                <div class="col-md-8 ml-5">
+                                                    <button class="btn btn-dark w-47 mt-4" id="btnSubmitRahmen" onclick="submitRahmenNumber()">
+                                                        Bestätigen
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        @*<p><strong>Zubehör-Tasche:</strong> Lorem</p>*@
+
+                                        <!-- Historie -->
+                                        <div class="col-md-4">
+                                            <h5 class="fw-bold mb-4">Historie</h5>
+                                            <div class="custom-timeline">
+
+                                                <!-- Item 1 -->
+                                                <div class="custom-timeline-item" style="display:none" id="HistoryData">
+                                                    <div class="timeline-marker bg-success">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                            <g clip-path="url(#clip0_484_2095)">
+                                                                <path d="M7.99987 14.6667C11.6817 14.6667 14.6665 11.682 14.6665 8.00012C14.6665 4.31824 11.6817 1.3335 7.99987 1.3335C4.318 1.3335 1.33325 4.31824 1.33325 8.00012C1.33325 11.682 4.318 14.6667 7.99987 14.6667Z" stroke="white" stroke-width="1.33332" stroke-linecap="round" stroke-linejoin="round" />
+                                                                <path d="M6 7.99983L7.33332 9.33315L9.99997 6.6665" stroke="white" stroke-width="1.33332" stroke-linecap="round" stroke-linejoin="round" />
+                                                            </g>
+                                                            <defs>
+                                                                <clipPath id="clip0_484_2095">
+                                                                    <rect width="15.9999" height="15.9999" fill="white" />
+                                                                </clipPath>
+                                                            </defs>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="timeline-details">
+                                                        <div id="assemblerName" class="fw-semibold">Montiert von Mike Engels</div>
+                                                        <small id="assemblerDate" class="text-muted"></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Item 2 -->
+                                                <div class="custom-timeline-item" style="display:none" id="unpackerHistory">
+                                                    <div class="timeline-marker bg-success">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                            <g clip-path="url(#clip0_484_2095)">
+                                                                <path d="M7.99987 14.6667C11.6817 14.6667 14.6665 11.682 14.6665 8.00012C14.6665 4.31824 11.6817 1.3335 7.99987 1.3335C4.318 1.3335 1.33325 4.31824 1.33325 8.00012C1.33325 11.682 4.318 14.6667 7.99987 14.6667Z" stroke="white" stroke-width="1.33332" stroke-linecap="round" stroke-linejoin="round" />
+                                                                <path d="M6 7.99983L7.33332 9.33315L9.99997 6.6665" stroke="white" stroke-width="1.33332" stroke-linecap="round" stroke-linejoin="round" />
+                                                            </g>
+                                                            <defs>
+                                                                <clipPath id="clip0_484_2095">
+                                                                    <rect width="15.9999" height="15.9999" fill="white" />
+                                                                </clipPath>
+                                                            </defs>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="timeline-details">
+                                                        <div id="unpackerName" class="fw-semibold">Montiert von Mike Engels</div>
+                                                        <small id="unpackerDate" class="text-muted"></small>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Display Box + History -->
+                                    <div class="row align-items-start">
+                                        <!-- Fahrradpass Box -->
+                                        <div class="col-md-6 mb-2">
+                                            <div class="bg-light d-flex align-items-center justify-content-center border"
+                                                 style="height: 230px; width: 335px;">
+                                                <iframe id="fahrradPassIframe" style="width: 100%; height: 100%; border: none;"></iframe>
+                                            </div>
+                                            <button class="btn btn-dark w-47 mt-3" onclick="rePrintPdf()">
+                                                Fahrradpass Drucken <i class="bi bi-printer ms-2"></i>
+                                            </button><br />
+                                            <button class="btn btn-dark mt-3" onclick="getBikepassPdf()" style="width:200px">
+                                                PDF öffnen <i class="bi bi-printer ms-2"></i>
+                                            </button>
+                                        </div>
+                                        <form id="rePrintFahrradForm">
+                                            <input type="hidden" name="rePrintRahmennummer" id="rePrintRahmennummer" />
+                                            <input type="hidden" name="rePrintSchlüsselnummer" id="rePrintSchlüsselnummer" />
+                                            <input type="hidden" name="rePrintAkkunummer" id="rePrintAkkunummer" />
+                                            <input type="hidden" name="rePrintZubehoerTasche" id="rePrintZubehoerTasche" />
+                                            <input type="hidden" name="rePrintGabelNummer" id="rePrintGabelNummer" />
+                                            <input type="hidden" name="rePrintBikeId" id="rePrintBikeId" />
+                                            <input type="hidden" name="rePrintBearbeiter" id="rePrintBearbeiter" />
+                                        </form>
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right panel -->
+                    <div class="col-md-3">
+                        <div class="right-panel">
+
+
+
+                            <div id="bikeInfoBox" style="">
+                                <img id="bikeImage" src="" alt="Produktbild" style="width:270px; height:150px; margin-bottom:5px; " />
+                                <strong>Marke:</strong> <span id="brand"></span><br />
+                                <strong>Model:</strong> <span id="model"></span><br />
+                                <strong>Artikelnummer:</strong> <span id="articleNumber"></span><br />
+                                <strong>EAN:</strong> <span id="ean"></span>
+
+                                <div id="extraInfo" class="mt-3 mb-4">
+                                    @*<p style="cursor: pointer;" id="toggleInfo">
+                                            <i class="bi bi-info-circle m-1" style="font-size: 15px;"></i>
+                                            <strong>Zusätzliche Informationen</strong>
+                                            <i id="toggleInfoIcon" class="bi bi-chevron-down m-1" style="font-size: 15px;"></i>
+                                        </p>*@
+                                    <ul id="extraInfoList" style="list-style: none;padding: 0;">
+                                        <li><strong>Kategorie:</strong> <span id="kategorie"></span></li>
+                                        <li><strong>Rahmentyp:</strong> <span id="rahmentyp"></span></li>
+                                        <li><strong>Rahmenmaterial:</strong> <span id="rahmenmaterial"></span></li>
+                                        <li><strong>Schaltung:</strong> <span id="schaltung"></span></li>
+                                        <li><strong>Radgröße:</strong> <span id="radgroesse"></span></li>
+                                        <li><strong>Rahmenhöhe:</strong> <span id="rahmenhoehe"></span></li>
+                                        <li><strong>Farbe:</strong> <span id="farbe"></span></li>
+                                        <li><strong id="akkuHead">Akku:</strong> <span id="akku"></span></li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" name="bikeId" id="bikeId" />
+                                <input type="hidden" name="bikeBrand" id="bikeBrand" />
+                                <div id="isDifficultCheckboxContainer" class="form-check mt-1" style="display:none">
+                                    <input class="form-check-input" name="isDifficultCheckbox" type="checkbox" id="isDifficultCheckbox" />
+                                    <label class="form-check-label" for="isDifficultCheckbox">
+                                        Schweres Rad
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
+
+

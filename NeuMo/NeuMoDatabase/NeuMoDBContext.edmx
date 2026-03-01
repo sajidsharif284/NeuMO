@@ -1,0 +1,554 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="NeuMoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tbl_BikePassPrint_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="SerialNumber" Type="nvarchar(max)" />
+          <Property Name="Barcode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Frame_Num" Type="nvarchar" MaxLength="50" />
+          <Property Name="BranchName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Monteur" Type="nvarchar" MaxLength="50" />
+          <Property Name="AccesoryBag" Type="nvarchar" MaxLength="50" />
+          <Property Name="BatteryNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="KeyNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="ForkNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="CompanyName" Type="nvarchar(max)" />
+          <Property Name="Mechaniker" Type="nvarchar(max)" />
+          <Property Name="Brand" Type="nvarchar(max)" />
+          <Property Name="Model" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="tbl_BikePlacements">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BoxName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="IsOccupied" Type="bit" Nullable="false" />
+          <Property Name="IsPriority" Type="bit" Nullable="false" />
+          <Property Name="Location" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateTime" Type="datetime" Nullable="false" />
+          <Property Name="UnPackerID" Type="int" />
+          <Property Name="AssemblerID" Type="int" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="BikeID" Type="nvarchar(max)" />
+          <Property Name="Barcode" Type="nvarchar(max)" />
+          <Property Name="AssembleStartTime" Type="datetime" />
+          <Property Name="AssembleEndTime" Type="datetime" />
+          <Property Name="IsDifficult" Type="bit" />
+          <Property Name="KeyNumber" Type="nvarchar(max)" />
+          <Property Name="FrameNumber" Type="nvarchar(max)" />
+          <Property Name="IsEbike" Type="bit" />
+          <Property Name="CompanyName" Type="nvarchar(max)" />
+          <Property Name="Mechaniker" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="tbl_Branches">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CompanyId" Type="int" Nullable="false" />
+          <Property Name="BranchName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="FlowType" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tbl_BrandExtension">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="100" />
+          <Property Name="Picture" Type="image" />
+        </EntityType>
+        <EntityType Name="tbl_Company">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="tbl_FrameNumberPattern">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BrandDesignation" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Pattern" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="tbl_StorageGrid">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BoxName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Company" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="Password" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
+          <Property Name="IsUnpacker" Type="bit" />
+          <Property Name="IsMechanic" Type="bit" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="BranchName" Type="nvarchar(max)" />
+          <Property Name="CompanyName" Type="nvarchar(max)" />
+          <Property Name="EmployeeNumber" Type="nvarchar(max)" />
+          <Property Name="BikepassPrinter" Type="nvarchar(max)" />
+          <Property Name="LabelPrinter" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'NeuMo_Test.dbo.vw_NeumoProductDetails' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_NeumoProductDetails">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="No_" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Target Group" />
+            <PropertyRef Name="Brand" />
+            <PropertyRef Name="Frame Height" />
+            <PropertyRef Name="Frame Type" />
+            <PropertyRef Name="Wheel Size" />
+            <PropertyRef Name="Gearshift" />
+            <PropertyRef Name="Frame Material" />
+            <PropertyRef Name="Description 2" />
+            <PropertyRef Name="Description 3" />
+            <PropertyRef Name="ERFA No_" />
+            <PropertyRef Name="Blocked" />
+            <PropertyRef Name="E-Bike Engine" />
+            <PropertyRef Name="Unit Cost" />
+            <PropertyRef Name="Unit Price" />
+            <PropertyRef Name="Model Year" />
+            <PropertyRef Name="Bar Code" />
+            <PropertyRef Name="EAN" />
+            <PropertyRef Name="Leistung" />
+          </Key>
+          <Property Name="Company" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="No_" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Target Group" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Brand" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="Colour" Type="varchar" MaxLength="50" />
+          <Property Name="ColourForName" Type="varchar" MaxLength="50" />
+          <Property Name="Frame Height" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Frame Type" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Wheel Size" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Gearshift" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Frame Material" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Description 2" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description 3" Type="varchar" MaxLength="65" Nullable="false" />
+          <Property Name="ERFA No_" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Item Category Code" Type="varchar" MaxLength="30" />
+          <Property Name="Blocked" Type="tinyint" Nullable="false" />
+          <Property Name="E-Bike Engine" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Leistung" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Unit Cost" Type="numeric" Precision="38" Scale="20" Nullable="false" />
+          <Property Name="Unit Price" Type="numeric" Precision="38" Scale="20" Nullable="false" />
+          <Property Name="Model Year" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Bar Code" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="EAN" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="isebike" Type="bit" />
+          <Property Name="E-Bike Engine Beschreibung" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityContainer Name="NeuMoModelStoreContainer">
+          <EntitySet Name="tbl_BikePassPrint_Log" EntityType="Self.tbl_BikePassPrint_Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_BikePlacements" EntityType="Self.tbl_BikePlacements" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_Branches" EntityType="Self.tbl_Branches" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_BrandExtension" EntityType="Self.tbl_BrandExtension" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_Company" EntityType="Self.tbl_Company" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_FrameNumberPattern" EntityType="Self.tbl_FrameNumberPattern" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_StorageGrid" EntityType="Self.tbl_StorageGrid" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vw_NeumoProductDetails" EntityType="Self.vw_NeumoProductDetails" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_NeumoProductDetails].[Company] AS [Company], 
+    [vw_NeumoProductDetails].[No_] AS [No_], 
+    [vw_NeumoProductDetails].[Description] AS [Description], 
+    [vw_NeumoProductDetails].[Target Group] AS [Target Group], 
+    [vw_NeumoProductDetails].[Brand] AS [Brand], 
+    [vw_NeumoProductDetails].[Colour] AS [Colour], 
+    [vw_NeumoProductDetails].[ColourForName] AS [ColourForName], 
+    [vw_NeumoProductDetails].[Frame Height] AS [Frame Height], 
+    [vw_NeumoProductDetails].[Frame Type] AS [Frame Type], 
+    [vw_NeumoProductDetails].[Wheel Size] AS [Wheel Size], 
+    [vw_NeumoProductDetails].[Gearshift] AS [Gearshift], 
+    [vw_NeumoProductDetails].[Frame Material] AS [Frame Material], 
+    [vw_NeumoProductDetails].[Description 2] AS [Description 2], 
+    [vw_NeumoProductDetails].[Description 3] AS [Description 3], 
+    [vw_NeumoProductDetails].[ERFA No_] AS [ERFA No_], 
+    [vw_NeumoProductDetails].[Item Category Code] AS [Item Category Code], 
+    [vw_NeumoProductDetails].[Blocked] AS [Blocked], 
+    [vw_NeumoProductDetails].[E-Bike Engine] AS [E-Bike Engine], 
+    [vw_NeumoProductDetails].[Leistung] AS [Leistung], 
+    [vw_NeumoProductDetails].[Unit Cost] AS [Unit Cost], 
+    [vw_NeumoProductDetails].[Unit Price] AS [Unit Price], 
+    [vw_NeumoProductDetails].[Model Year] AS [Model Year], 
+    [vw_NeumoProductDetails].[Bar Code] AS [Bar Code], 
+    [vw_NeumoProductDetails].[EAN] AS [EAN], 
+    [vw_NeumoProductDetails].[isebike] AS [isebike], 
+    [vw_NeumoProductDetails].[E-Bike Engine Beschreibung] AS [E-Bike Engine Beschreibung]
+    FROM [dbo].[vw_NeumoProductDetails] AS [vw_NeumoProductDetails]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NeuMoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="NeuMoEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbl_StorageGrid" EntityType="NeuMoModel.tbl_StorageGrid" />
+          <EntitySet Name="tbl_FrameNumberPattern" EntityType="NeuMoModel.tbl_FrameNumberPattern" />
+          <EntitySet Name="tbl_BikePlacements" EntityType="NeuMoModel.tbl_BikePlacements" />
+          <EntitySet Name="tbl_Branches" EntityType="NeuMoModel.tbl_Branches" />
+          <EntitySet Name="Users" EntityType="NeuMoModel.Users" />
+          <EntitySet Name="tbl_Company" EntityType="NeuMoModel.tbl_Company" />
+          <EntitySet Name="tbl_BikePassPrint_Log" EntityType="NeuMoModel.tbl_BikePassPrint_Log" />
+          <EntitySet Name="vw_NeumoProductDetails" EntityType="NeuMoModel.vw_NeumoProductDetails" />
+          <EntitySet Name="tbl_BrandExtension" EntityType="NeuMoModel.tbl_BrandExtension" />
+        </EntityContainer>
+        <EntityType Name="tbl_StorageGrid">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BoxName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tbl_FrameNumberPattern">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="BrandDesignation" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Pattern" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tbl_BikePlacements">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BoxName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsOccupied" Type="Boolean" Nullable="false" />
+          <Property Name="IsPriority" Type="Boolean" Nullable="false" />
+          <Property Name="Location" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AssemblerID" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BikeID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AssembleStartTime" Type="DateTime" Precision="3" />
+          <Property Name="AssembleEndTime" Type="DateTime" Precision="3" />
+          <Property Name="IsDifficult" Type="Boolean" />
+          <Property Name="KeyNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UnPackerID" Type="Int32" />
+          <Property Name="FrameNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsEbike" Type="Boolean" />
+          <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Barcode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mechaniker" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tbl_Branches">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CompanyId" Type="Int32" Nullable="false" />
+          <Property Name="BranchName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FlowType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <Property Name="IsUnpacker" Type="Boolean" />
+          <Property Name="IsMechanic" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="BranchName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EmployeeNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BikepassPrinter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LabelPrinter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tbl_Company">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tbl_BikePassPrint_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Precision="3" />
+          <Property Name="SerialNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Barcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Frame_Num" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BranchName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Monteur" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccesoryBag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BatteryNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="KeyNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ForkNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mechaniker" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Brand" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="vw_NeumoProductDetails">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="No_" />
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="Target_Group" />
+            <PropertyRef Name="Brand" />
+            <PropertyRef Name="Frame_Height" />
+            <PropertyRef Name="Frame_Type" />
+            <PropertyRef Name="Wheel_Size" />
+            <PropertyRef Name="Gearshift" />
+            <PropertyRef Name="Frame_Material" />
+            <PropertyRef Name="Description_2" />
+            <PropertyRef Name="Description_3" />
+            <PropertyRef Name="ERFA_No_" />
+            <PropertyRef Name="Blocked" />
+            <PropertyRef Name="E_Bike_Engine" />
+            <PropertyRef Name="Leistung" />
+            <PropertyRef Name="Unit_Cost" />
+            <PropertyRef Name="Unit_Price" />
+            <PropertyRef Name="Model_Year" />
+            <PropertyRef Name="Bar_Code" />
+            <PropertyRef Name="EAN" />
+          </Key>
+          <Property Name="Company" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="No_" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Target_Group" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Brand" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Colour" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ColourForName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Frame_Height" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Frame_Type" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Wheel_Size" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Gearshift" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Frame_Material" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Description_2" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description_3" Type="String" Nullable="false" MaxLength="65" FixedLength="false" Unicode="false" />
+          <Property Name="ERFA_No_" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Item_Category_Code" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Blocked" Type="Byte" Nullable="false" />
+          <Property Name="E_Bike_Engine" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Leistung" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Unit_Cost" Type="Decimal" Nullable="false" Precision="38" Scale="20" />
+          <Property Name="Unit_Price" Type="Decimal" Nullable="false" Precision="38" Scale="20" />
+          <Property Name="Model_Year" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Bar_Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EAN" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="isebike" Type="Boolean" />
+          <Property Name="E_Bike_Engine_Beschreibung" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tbl_BrandExtension">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NeuMoModelStoreContainer" CdmEntityContainer="NeuMoEntities">
+          <EntitySetMapping Name="tbl_StorageGrid">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_StorageGrid">
+              <MappingFragment StoreEntitySet="tbl_StorageGrid">
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="BoxName" ColumnName="BoxName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_FrameNumberPattern">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_FrameNumberPattern">
+              <MappingFragment StoreEntitySet="tbl_FrameNumberPattern">
+                <ScalarProperty Name="Pattern" ColumnName="Pattern" />
+                <ScalarProperty Name="BrandDesignation" ColumnName="BrandDesignation" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_BikePlacements">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_BikePlacements">
+              <MappingFragment StoreEntitySet="tbl_BikePlacements">
+                <ScalarProperty Name="Mechaniker" ColumnName="Mechaniker" />
+                <ScalarProperty Name="Barcode" ColumnName="Barcode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="IsEbike" ColumnName="IsEbike" />
+                <ScalarProperty Name="FrameNumber" ColumnName="FrameNumber" />
+                <ScalarProperty Name="UnPackerID" ColumnName="UnPackerID" />
+                <ScalarProperty Name="KeyNumber" ColumnName="KeyNumber" />
+                <ScalarProperty Name="IsDifficult" ColumnName="IsDifficult" />
+                <ScalarProperty Name="AssembleEndTime" ColumnName="AssembleEndTime" />
+                <ScalarProperty Name="AssembleStartTime" ColumnName="AssembleStartTime" />
+                <ScalarProperty Name="BikeID" ColumnName="BikeID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AssemblerID" ColumnName="AssemblerID" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="IsPriority" ColumnName="IsPriority" />
+                <ScalarProperty Name="IsOccupied" ColumnName="IsOccupied" />
+                <ScalarProperty Name="BoxName" ColumnName="BoxName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_Branches">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_Branches">
+              <MappingFragment StoreEntitySet="tbl_Branches">
+                <ScalarProperty Name="FlowType" ColumnName="FlowType" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+                <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="NeuMoModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LabelPrinter" ColumnName="LabelPrinter" />
+                <ScalarProperty Name="BikepassPrinter" ColumnName="BikepassPrinter" />
+                <ScalarProperty Name="EmployeeNumber" ColumnName="EmployeeNumber" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsMechanic" ColumnName="IsMechanic" />
+                <ScalarProperty Name="IsUnpacker" ColumnName="IsUnpacker" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_Company">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_Company">
+              <MappingFragment StoreEntitySet="tbl_Company">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_BikePassPrint_Log">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_BikePassPrint_Log">
+              <MappingFragment StoreEntitySet="tbl_BikePassPrint_Log">
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="Brand" ColumnName="Brand" />
+                <ScalarProperty Name="Mechaniker" ColumnName="Mechaniker" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="ForkNumber" ColumnName="ForkNumber" />
+                <ScalarProperty Name="KeyNumber" ColumnName="KeyNumber" />
+                <ScalarProperty Name="BatteryNumber" ColumnName="BatteryNumber" />
+                <ScalarProperty Name="AccesoryBag" ColumnName="AccesoryBag" />
+                <ScalarProperty Name="Monteur" ColumnName="Monteur" />
+                <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+                <ScalarProperty Name="Frame_Num" ColumnName="Frame_Num" />
+                <ScalarProperty Name="Barcode" ColumnName="Barcode" />
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_NeumoProductDetails">
+            <EntityTypeMapping TypeName="NeuMoModel.vw_NeumoProductDetails">
+              <MappingFragment StoreEntitySet="vw_NeumoProductDetails">
+                <ScalarProperty Name="E_Bike_Engine_Beschreibung" ColumnName="E-Bike Engine Beschreibung" />
+                <ScalarProperty Name="isebike" ColumnName="isebike" />
+                <ScalarProperty Name="EAN" ColumnName="EAN" />
+                <ScalarProperty Name="Bar_Code" ColumnName="Bar Code" />
+                <ScalarProperty Name="Model_Year" ColumnName="Model Year" />
+                <ScalarProperty Name="Unit_Price" ColumnName="Unit Price" />
+                <ScalarProperty Name="Unit_Cost" ColumnName="Unit Cost" />
+                <ScalarProperty Name="Leistung" ColumnName="Leistung" />
+                <ScalarProperty Name="E_Bike_Engine" ColumnName="E-Bike Engine" />
+                <ScalarProperty Name="Blocked" ColumnName="Blocked" />
+                <ScalarProperty Name="Item_Category_Code" ColumnName="Item Category Code" />
+                <ScalarProperty Name="ERFA_No_" ColumnName="ERFA No_" />
+                <ScalarProperty Name="Description_3" ColumnName="Description 3" />
+                <ScalarProperty Name="Description_2" ColumnName="Description 2" />
+                <ScalarProperty Name="Frame_Material" ColumnName="Frame Material" />
+                <ScalarProperty Name="Gearshift" ColumnName="Gearshift" />
+                <ScalarProperty Name="Wheel_Size" ColumnName="Wheel Size" />
+                <ScalarProperty Name="Frame_Type" ColumnName="Frame Type" />
+                <ScalarProperty Name="Frame_Height" ColumnName="Frame Height" />
+                <ScalarProperty Name="ColourForName" ColumnName="ColourForName" />
+                <ScalarProperty Name="Colour" ColumnName="Colour" />
+                <ScalarProperty Name="Brand" ColumnName="Brand" />
+                <ScalarProperty Name="Target_Group" ColumnName="Target Group" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="No_" ColumnName="No_" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_BrandExtension">
+            <EntityTypeMapping TypeName="NeuMoModel.tbl_BrandExtension">
+              <MappingFragment StoreEntitySet="tbl_BrandExtension">
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

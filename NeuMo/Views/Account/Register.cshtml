@@ -1,0 +1,794 @@
+﻿@model IEnumerable<NeuMo.NeuMoDatabase.Users>
+
+@{
+    ViewBag.Title = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Register Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/Register.js"></script>
+    <style>
+        body {
+            background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100vh;
+        }
+
+        .custom-sidebar {
+            width: 50px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #e1005a;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            font-size: 22px;
+            color: #eaa;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .unPackerIcon {
+            font-size: 22px;
+            color: red;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+
+        .circle-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fdd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+        .register-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+
+
+        .logout-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e1005a;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .custom-table-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+
+            /* Sticky header styling */
+            .custom-table-wrapper thead th {
+                position: sticky;
+                top: 0;
+                background-color: #f8f9fa;
+                z-index: 2;
+            }
+
+            /* Optional scroll styling */
+            .custom-table-wrapper::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .custom-table-wrapper::-webkit-scrollbar-thumb {
+                background: #ccc;
+                border-radius: 4px;
+            }
+
+
+
+
+
+        .form-check {
+            margin-top: 15px; /* spacing for checkbox */
+        }
+
+        button.btn {
+            margin-top: 0px; /* spacing for button */
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const deleteButtons = document.querySelectorAll(".deleteBtn");
+
+            deleteButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const userId = this.getAttribute("data-userid");
+                    const username = this.getAttribute("data-username");
+
+                    if (confirm(`Are you sure you want to delete user "${username}"?`)) {
+                        // Submit a hidden form
+                        const form = document.createElement("form");
+                        form.method = "post";
+                        form.action = form.action = '@Url.Action("DeleteUser", "Account")' + '/' + userId;
+
+                        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]');
+                        if (antiForgeryToken) {
+                            const tokenInput = document.createElement("input");
+                            tokenInput.type = "hidden";
+                            tokenInput.name = "__RequestVerificationToken";
+                            tokenInput.value = antiForgeryToken.value;
+                            form.appendChild(tokenInput);
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            debugger;
+            const companyFilter = document.getElementById("companyFilter");
+            const branchFilter = document.getElementById("branchFilter");
+            const userFilter = document.getElementById("userFilter");
+
+            function normalize(value) {
+                return (value || "").toLowerCase().trim();
+            }
+
+            function filterTable() {
+                debugger;
+                const selectedCompany = normalize(companyFilter.value);
+                const selectedBranch = normalize(branchFilter.value);
+                const selectedUser = normalize(userFilter.value);
+
+                const rows = document.querySelectorAll(".custom-table-wrapper tbody tr");
+
+                rows.forEach(row => {
+                    debugger;
+                    const rowCompany = normalize(row.getAttribute("data-company"));
+                    const rowBranch = normalize(row.getAttribute("data-branch"));
+                    const rowStatus = normalize(row.getAttribute("data-status"));
+
+                    const matchesCompany = !selectedCompany || rowCompany === selectedCompany;
+                    const matchesBranch = !selectedBranch || rowBranch === selectedBranch;
+
+                    // Map dropdown to true/false
+                    let matchesUser = true;
+                    if (selectedUser === "aktiv") {
+                        matchesUser = rowStatus === "true";
+                    } else if (selectedUser === "deaktiviert") {
+                        matchesUser = rowStatus === "false";
+                    }
+
+                    row.style.display = (matchesCompany && matchesBranch && matchesUser) ? "" : "none";
+                });
+            }
+
+            companyFilter.addEventListener("change", filterTable);
+            branchFilter.addEventListener("change", filterTable);
+            userFilter.addEventListener("change", filterTable);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // === Shared function for both modals ===
+            function setupRoleValidation(modalId, checkboxIds, validationMessageId) {
+                const form = document.querySelector(`${modalId} form`);
+                const adminCheckbox = document.getElementById(checkboxIds.admin);
+                const unpackerCheckbox = document.getElementById(checkboxIds.unpacker);
+                const mechanicCheckbox = document.getElementById(checkboxIds.mechanic);
+                const roleValidationMsg = document.getElementById(validationMessageId);
+
+                const roleCheckboxes = [adminCheckbox, unpackerCheckbox, mechanicCheckbox];
+
+                // Mutual exclusivity logic
+                adminCheckbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        unpackerCheckbox.checked = false;
+                        mechanicCheckbox.checked = false;
+                    }
+                });
+
+                [unpackerCheckbox, mechanicCheckbox].forEach(cb => {
+                    cb.addEventListener('change', function () {
+                        if (this.checked) {
+                            adminCheckbox.checked = false;
+                        }
+                    });
+                });
+
+                // Required validation on form submit
+                form.addEventListener('submit', function (e) {
+                    const oneChecked = roleCheckboxes.some(cb => cb.checked);
+                    if (!oneChecked) {
+                        e.preventDefault();
+                        roleValidationMsg.classList.remove('d-none');
+                    } else {
+                        roleValidationMsg.classList.add('d-none');
+                    }
+                });
+
+                // Hide message on change
+                roleCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', function () {
+                        const oneChecked = roleCheckboxes.some(cb => cb.checked);
+                        if (oneChecked) {
+                            roleValidationMsg.classList.add('d-none');
+                        }
+                    });
+                });
+            }
+
+            // === Initialize for Register Modal ===
+            setupRoleValidation(
+                '#registerModal',
+                {
+                    admin: 'roleAdmin',
+                    unpacker: 'roleUnpacker',
+                    mechanic: 'roleAssembler'
+                },
+                'roleValidation'
+            );
+
+            // === Initialize for Edit Modal ===
+            setupRoleValidation(
+                '#editModal',
+                {
+                    admin: 'editIsAdmin',
+                    unpacker: 'editIsUnpacker',
+                    mechanic: 'editIsMechanic'
+                },
+                'editRoleValidation'
+            );
+        });
+        $(document).ready(function () {
+            $('.editBtn').on('click', function () {
+                debugger;
+                var userId = $(this).data('userid');
+                var userName = $(this).data('username');
+                var email = $(this).data('email');
+                var isAdmin = $(this).data('isadmin');
+                var isUnpacker = $(this).data('isunpacker');
+                var isMechanic = $(this).data('ismechanic');
+
+                var isActive = $(this).data('isactive');
+
+                var companyName = $(this).data('companyid'); // It's the company *name*
+                var branchName = $(this).data('branchid');   // It's the branch *name*
+
+                var employeeNr = $(this).data('employeenr');   // It's the branch *name*
+
+                var bikepassprinter = $(this).data('bikepassprinter'); 
+                var labelprinter = $(this).data('labelprinter'); 
+
+                // Set user data
+                $('#editUserId').val(userId);
+                $('#editUserName').val(userName);
+                $('#editEmail').val(email);
+
+                $('#editIsAdmin').prop('checked', isAdmin === true || isAdmin === "true");
+                $('#editIsUnpacker').prop('checked', isUnpacker === true || isUnpacker === "true");
+                $('#editIsMechanic').prop('checked', isMechanic === true || isMechanic === "true");
+
+                $('#editIsActive').prop('checked', isActive === true || isActive === "true");
+
+                // Set company (read-only display + hidden input)
+                $('#displayCompanyName').val(companyName);
+                $('#hiddenCompanyName').val(companyName);
+
+                $('#displayEmployeeNr').val(employeeNr);
+
+                $('#displayBikepassPrinter').val(bikepassprinter);
+                $('#displayLabelPrinter').val(labelprinter);
+
+                // Load branches for this company
+                $.ajax({
+                    url: '@Url.Action("GetBranchesByCompanyForEdit", "Account")',
+                    type: 'GET',
+                    data: { companyName: companyName },
+                    success: function (branches) {
+                        var $branchDropdown = $('#editBranch');
+                        $branchDropdown.empty();
+
+                        $.each(branches, function (i, branch) {
+                            $branchDropdown.append($('<option>', {
+                                value: branch.text,
+                                text: branch.text
+                            }));
+                        });
+
+                        // Preselect the current branch
+                        $branchDropdown.val(branchName);
+                    }
+                });
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('#registerModal').on('hidden.bs.modal', function () {
+                $('#BranchId').empty().append('<option value="">-- Filiale auswählen --</option>');
+                $('#UserName').val('');
+                $('#Email').val('');
+                $('#Password').val('');
+                $('#CompanyId').val('');
+                $('#CompanyName').val('');
+                $('#BranchName').val('');
+                $('.role-checkbox').prop('checked', false);
+            });
+
+            $('#CompanyId').change(function () {
+                var selectedText = $("#CompanyId option:selected").text();
+                $('#CompanyName').val(selectedText);
+
+                var companyId = $(this).val();
+                if (companyId) {
+                    var url = '@Url.Action("GetBranchesByCompany", "Account")';
+                    $.getJSON(url, { companyId: companyId }, function (data) {
+                        var $branch = $('#BranchId');
+                        $branch.empty();
+                        $branch.append('<option value="">-- Filiale auswählen --</option>');
+                        $.each(data, function (i, branch) {
+                            $branch.append('<option value="' + branch.BranchId + '">' + branch.BranchName + '</option>');
+                        });
+                    });
+                } else {
+                    $('#BranchId').empty().append('<option value="">-- Filiale auswählen --</option>');
+                    $('#BranchName').val('');
+                }
+            });
+
+            $('#BranchId').change(function () {
+                var selectedText = $("#BranchId option:selected").text();
+                $('#BranchName').val(selectedText);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    @if (ViewBag.Flow != null && ViewBag.Flow == "Standard, Feste Auspacker & Montage")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "Direktmontage, Nur Monteure")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("DirektMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="DirektMontage">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "FlexModell, Flexible Auspacker & Monteur")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                                <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                        <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>*@
+                        <div class="">
+                            <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="BikePassLog">
+                                    <i class="bi bi-archive unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    }
+
+                    <!-- Push the following block to the bottom -->
+                <div class="mt-auto d-flex flex-column align-items-center gap-2">
+
+                    <div class="">
+                        <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="Branches">
+                                <i class="bi bi-card-list unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="">
+                        <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="Rahmennummer">
+                                <i class="bi bi-code unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="circle-button">
+                        <form action="@Url.Action("Logout", "Account")" method="post">
+                            @*@Html.AntiForgeryToken()*@
+                            <button type="submit" class="logout-button" title="Logout">
+                                @ViewBag.UserName
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-md-11 table-container">
+                <div class="mt-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Registrierte Nutzer</h3>
+                        <!-- ⭐ TOP RIGHT: Branch Name -->
+                        <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                            <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                        </h4>
+                    </div>
+                    <div class="mt-4">
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="companyFilter">
+                                    <option value="">Firma</option>
+                                    @foreach (var company in ViewBag.Companies as SelectList)
+                                    {
+                                        <option value="@company.Text">@company.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="branchFilter">
+                                    <option value="">Filale</option>
+                                    @foreach (var branch in ViewBag.Branches as SelectList)
+                                    {
+                                        <option value="@branch.Text">@branch.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="userFilter">
+                                    <option value="">Mitarbeiter</option>
+                                    <option value="aktiv">aktiv</option>
+                                    <option value="deaktiviert">deaktiviert</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 offset-md-1">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Neu hinzufügen</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- User Table -->
+                <!-- Scrollable Table with Sticky Header -->
+                <div class="custom-table-wrapper">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Benutzername</th>
+                                <th>@Html.DisplayNameFor(model => model.First().Email)</th>
+                                <th>Firma</th>
+                                <th>Filale</th>
+                                <th>Admin</th>
+                                <th>Auspacker</th>
+                                <th>Monteur</th>
+                                <th>MitarbeiterNr</th>
+                                <th>Fahrradpass-Drucker</th>
+                                <th>Etiketten-Drucker</th>
+                                <th>Active</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-company="@item.CompanyName" data-branch="@item.BranchName" data-status="@item.IsActive">
+                                    <td>@item.UserName</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.CompanyName</td>
+                                    <td>@item.BranchName</td>
+                                    <td>
+                                        <input type="checkbox" disabled @(item.IsAdmin ? "checked" : "") style="transform: scale(1.5);" />
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" disabled @(item.IsUnpacker.GetValueOrDefault() ? "checked" : "") style="transform: scale(1.5);" />
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" disabled @(item.IsMechanic.GetValueOrDefault() ? "checked" : "") style="transform: scale(1.5);" />
+                                    </td>
+                                    <td>@item.EmployeeNumber</td>
+                                    <td>@item.BikepassPrinter</td>
+                                    <td>@item.LabelPrinter</td>
+                                    <td>@item.IsActive</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning editBtn"
+                                                data-userid="@item.UserId"
+                                                data-username="@item.UserName"
+                                                data-email="@item.Email"
+                                                data-companyid="@item.CompanyName"
+                                                data-branchid="@item.BranchName"
+                                                data-isadmin="@item.IsAdmin.ToString().ToLower()"
+                                                data-isunpacker="@item.IsUnpacker.ToString().ToLower()"
+                                                data-ismechanic="@item.IsMechanic.ToString().ToLower()"
+                                                data-employeenr="@item.EmployeeNumber"
+                                                data-bikepassprinter="@item.BikepassPrinter"
+                                                data-labelprinter="@item.LabelPrinter"
+                                                data-isactive="@item.IsActive.ToString().ToLower()"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editModal">
+                                            Bearbeiten
+                                        </button>
+                                        <button class="btn btn-sm btn-danger deleteBtn" style="display:none"
+                                                data-userid="@item.UserId"
+                                                data-username="@item.UserName">
+                                            Löschen
+                                        </button>
+                                        @Html.AntiForgeryToken()
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+                @if (TempData["AlertMessage"] != null)
+                {
+                    <script type="text/javascript">
+                       alert('@TempData["AlertMessage"]');
+                    </script>
+                }
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="@Url.Action("Register", "Account")">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerModalLabel">Neuen Mitarbeiter hinzufügen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="UserName" class="form-label">Name</label>
+                            <input type="text" name="UserName" id="UserName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Email" class="form-label">Email</label>
+                            <input type="email" name="Email" id="Email" class="form-control"  />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Password" class="form-label">Passwort</label>
+                            <input type="password" name="Password" id="Password" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="EmployeeNumber" class="form-label">Mitarbeiternummer</label>
+                            <input type="text" name="EmployeeNumber" id="EmployeeNumber" class="form-control" />
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="BikepassPrinter" class="form-label">Fahrradpass-Drucker</label>
+                            <input type="text" name="BikepassPrinter" id="BikepassPrinter" class="form-control"  />
+                        </div>
+                        <div class="mb-3">
+                            <label for="LabelPrinter" class="form-label">Etiketten-Drucker</label>
+                            <input type="text" name="LabelPrinter" id="LabelPrinter" class="form-control"  />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CompanyId" class="form-label">Firma</label>
+                            <select id="CompanyId" class="form-select" required>
+                                <option value="">--  Firma auswählen --</option>
+                                @foreach (var company in ViewBag.Companies as SelectList)
+                                {
+                                    <option value="@company.Value">@company.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="BranchId" class="form-label">Filale</label>
+                            <select id="BranchId" class="form-select" required>
+                                <option value="">-- Filiale auswählen --</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="CompanyName" id="CompanyName" />
+                        <input type="hidden" name="BranchName" id="BranchName" />
+                        <div class="mb-3">
+                            <label class="form-label">Rolle</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input role-checkbox" name="SelectedRoles" value="Admin" id="roleAdmin">
+                                <label class="form-check-label" for="roleAdmin">Admin</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input role-checkbox" name="SelectedRoles" value="Unpacker" id="roleUnpacker">
+                                <label class="form-check-label" for="roleUnpacker">Auspacker</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input role-checkbox" name="SelectedRoles" value="Mechanic" id="roleAssembler">
+                                <label class="form-check-label" for="roleAssembler">Monteur</label>
+                            </div>
+                            <div class="text-danger d-none" id="roleValidation">Bitte wählen Sie mindestens eine Rolle aus.</div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="@Url.Action("EditUserData", "Account")">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="UserId" id="editUserId" />
+                        <input type="hidden" name="CompanyName" id="hiddenCompanyName" />
+
+                        <div class="mb-3">
+                            <label for="editUserName" class="form-label">Name</label>
+                            <input type="text" name="UserName" id="editUserName" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" name="Email" id="editEmail" class="form-control"  />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Passwort</label>
+                            <input type="password" name="Password" id="editPassword" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mitarbeiternummer</label>
+                            <input type="text" name="EmployeeNumber" id="displayEmployeeNr" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fahrradpass-Drucker</label>
+                            <input type="text" name="BikepassPrinter" id="displayBikepassPrinter" class="form-control"  />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Etiketten-Drucker</label>
+                            <input type="text" name="LabelPrinter" id="displayLabelPrinter" class="form-control"  />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Firma</label>
+                            <input type="text" id="displayCompanyName" class="form-control" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editBranch" class="form-label">Filale</label>
+                            <select name="BranchName" id="editBranch" class="form-select">
+                                <!-- Options will be populated via jQuery -->
+                            </select>
+                        </div>
+
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="IsActive" value="Active" class="form-check-input role-checkbox" id="editIsActive" />
+                            <label class="form-check-label" for="editIsActive">Active</label>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Rolle</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="SelectedRoles" value="Admin" class="form-check-input role-checkbox" id="editIsAdmin" />
+                            <label class="form-check-label" for="editIsAdmin">Admin</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="SelectedRoles" value="Unpacker" class="form-check-input role-checkbox" id="editIsUnpacker" />
+                            <label class="form-check-label" for="editIsUnpacker">Auspacker</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="SelectedRoles" value="Mechanic" class="form-check-input role-checkbox" id="editIsMechanic" />
+                            <label class="form-check-label" for="editIsMechanic">Monteur</label>
+                        </div>
+                        <div id="editRoleValidation" class="text-danger d-none">Please select at least one role.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
+

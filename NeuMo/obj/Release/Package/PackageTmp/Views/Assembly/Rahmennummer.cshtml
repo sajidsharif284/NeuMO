@@ -1,0 +1,787 @@
+﻿@model IEnumerable<NeuMo.NeuMoDatabase.tbl_FrameNumberPattern>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Rahmennummer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <style>
+    body {
+        background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100vh;
+    }
+
+        .custom-sidebar {
+            width: 50px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 99999 !important;
+        }
+        /* Password modal width */
+        #pagePasswordModal .modal-dialog {
+            max-width: 500px;
+        }
+
+        #pagePasswordModal .modal-content {
+            border-radius: 12px;
+        }
+
+        /* Password modal on top */
+        #pagePasswordModal {
+            z-index: 2000 !important;
+        }
+
+        /* Backdrop belonging to password modal only */
+        .modal-backdrop.page-password-backdrop {
+            z-index: 1990 !important;
+        }
+
+    .sidebar-logo {
+        font-weight: bold;
+        font-size: 18px;
+        color: #e1005a;
+        margin-bottom: 1rem;
+    }
+
+    .icon {
+        font-size: 22px;
+        color: #eaa;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+    .unPackerIcon {
+        font-size: 22px;
+        color: red;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+
+    .circle-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fdd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: red;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+
+    .register-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+
+
+    .logout-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #e1005a;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .form-check {
+        margin-top: 15px; /* spacing for checkbox */
+    }
+
+    button.btn {
+        margin-top: 15px; /* spacing for button */
+    }
+
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = new bootstrap.Modal(document.getElementById("pagePasswordModal"));
+            const passwordInput = document.getElementById("pagePasswordInput");
+            const errorLabel = document.getElementById("passwordError");
+            const PASSWORD = "FXXL4ever!2025";
+
+            // In-memory flag
+            let accessGranted = false;
+
+            // Show modal if not yet granted
+            if (!accessGranted) {
+                modal.show();
+            }
+
+            document.getElementById("submitPagePassword").addEventListener("click", function () {
+                validatePassword();
+            });
+
+            passwordInput.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") validatePassword();
+            });
+
+            function validatePassword() {
+                if (passwordInput.value === PASSWORD) {
+                    errorLabel.classList.add("d-none");
+                    accessGranted = true; // memory flag
+                    modal.hide();
+                } else {
+                    errorLabel.classList.remove("d-none");
+                    passwordInput.classList.add("is-invalid");
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const searchInput = document.getElementById("brandSearch");
+            const dropdown = document.getElementById("brandDropdown");
+
+            searchInput.addEventListener("keyup", function () {
+                let searchValue = this.value.toLowerCase();
+
+                let options = dropdown.querySelectorAll("option");
+
+                options.forEach((opt, index) => {
+                    if (index === 0) return;
+
+                    let text = opt.textContent.toLowerCase();
+
+                    if (text.includes(searchValue) && searchValue !== "") {
+                        opt.style.display = "";
+                    } else if (searchValue === "") {
+                        opt.style.display = "";
+                    } else {
+                        opt.style.display = "none";
+                    }
+                });
+            });
+
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            debugger;
+            const dropdown = document.getElementById("brandDropdown");
+            const musterList = document.getElementById("musterList");
+
+            // URL from MVC helper
+            const url = '@Url.Action("GetPatternsByBrand", "Assembly")';
+
+            dropdown.addEventListener("change", function () {
+                let brand = this.value;
+
+                if (brand === "") {
+                    musterList.innerHTML = "";
+                    return;
+                }
+
+                // AJAX CALL
+                fetch(`${url}?brand=${brand}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        debugger;
+                        musterList.innerHTML = ""; // clear old list
+
+                        if (data.length === 0) {
+                            musterList.innerHTML = `
+                                   <li class="list-group-item">Keine Muster gefunden</li>
+                                   `;
+                            return;
+                        }
+                        // Insert headings ONCE
+                        musterList.innerHTML = `
+            <li class="list-group-item bg-light fw-bold">
+                <div class="row">
+                    <div class="col">Marke</div>
+                    <div class="col">Logik</div>
+                    <div class="col-auto"></div>
+                </div>
+            </li>
+        `;
+                        // Add all pattern rows
+                        data.forEach(item => {
+                            let li = document.createElement("li");
+                            li.className = "list-group-item";
+
+                            li.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col"><strong>${brand.toUpperCase() }</strong></div>
+                    <div class="col"><strong>${item.Pattern}</strong></div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm text-danger delete-btn" data-id="${item.ID}">
+                            <i class="bi bi-trash" style="font-size:20px"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+                            musterList.appendChild(li);
+                        });
+                    });
+            });
+        });
+         // Add New
+        document.addEventListener("DOMContentLoaded", function () {
+
+    const musterList = document.getElementById("musterList");
+    const addPatternBtn = document.getElementById("addPatternBtn");
+
+    // URL for saving patterns
+    const saveUrl = '@Url.Action("AddPattern", "Assembly")';
+
+    // =============== ADD PATTERN INLINE ===============
+    addPatternBtn.addEventListener("click", function () {
+
+        // Prevent adding multiple empty rows
+        if (document.getElementById("newPatternRow")) return;
+
+        let row = `
+    <li id="newPatternRow" class="list-group-item d-flex align-items-center gap-2">
+         <input id="newBrandInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Markenname eingeben…"
+                  style="flex: 1;">
+          <input id="newPatternInput"
+               type="text"
+               class="form-control"
+               placeholder="Markenmuster eingeben…"
+               style="flex: 1;">
+
+
+
+        <button id="savePatternBtn" class="btn btn-success btn-sm">✓</button>
+        <button id="cancelPatternBtn" class="btn btn-danger btn-sm">X</button>
+    </li>
+`;
+
+        musterList.insertAdjacentHTML("afterbegin", row);
+
+        document.getElementById("newBrandInput").focus();
+    });
+
+    // =============== CANCEL ACTION ===============
+    document.addEventListener("click", function (e) {
+        if (e.target.id === "cancelPatternBtn") {
+            document.getElementById("newPatternRow").remove();
+        }
+    });
+
+    // =============== SAVE ACTION ===============
+    document.addEventListener("click", function (e) {
+        if (e.target.id !== "savePatternBtn") return;
+
+        const patternInput = document.getElementById("newPatternInput");
+        const brandInput = document.getElementById("newBrandInput");
+        const pattern = patternInput.value.trim();
+        const brand = brandInput.value.trim();
+
+        if (pattern === "") {
+            alert("Bitte ein Markenmuster eingeben.");
+            return;
+        }
+
+        if (brand === "") {
+            alert("Bitte eine Markenname eingeben.");
+            return;
+        }
+
+        // Regex validation
+        let isValidRegex = true;
+        try {
+            new RegExp(pattern);
+        } catch {
+            isValidRegex = false;
+        }
+
+        if (!isValidRegex) {
+            alert("Ungültiger Regex!");
+            return;
+        }
+
+        // Save to server
+        fetch(saveUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pattern: pattern, brand: brand })
+        })
+        .then(r => r.json())
+        .then(saved => {
+
+            if (!saved.success) {
+                alert("Fehler beim Speichern.");
+                return;
+            }
+
+            // Update dropdown with new brand if needed
+            const dropdown = document.getElementById("brandDropdown");
+            let exists = Array.from(dropdown.options).some(opt => opt.value === brand.toUpperCase());
+
+            if (!exists) {
+                let newOption = document.createElement("option");
+                newOption.value = brand.toUpperCase();
+                newOption.textContent = brand.toUpperCase();
+                dropdown.appendChild(newOption);
+            }
+
+            // Refresh list if user currently selected this brand
+            if (dropdown.value === brand.toUpperCase()) {
+                dropdown.dispatchEvent(new Event("change"));
+            }
+
+            // Remove input row
+            document.getElementById("newPatternRow").remove();
+
+            // Insert new pattern visually
+            // Create new li element with correct ID
+            let li = document.createElement("li");
+            li.className = "list-group-item";
+
+            li.innerHTML = `
+    <div class="row align-items-center">
+        <div class="col"><strong>${brand.toUpperCase() }</strong></div>
+        <div class="col"><strong>${pattern}</strong></div>
+        <div class="col-auto">
+            <button class="btn btn-sm text-danger delete-btn" data-id="${saved.id}">
+                <i class="bi bi-trash" style="font-size:20px"></i>
+            </button>
+        </div>
+    </div>
+`;
+
+            musterList.appendChild(li);
+
+            // Remove input row
+            document.getElementById("newPatternRow").remove();
+        });
+    });
+
+        });
+
+        // Delete data
+          document.addEventListener("DOMContentLoaded", function () {
+    const dropdown = document.getElementById("brandDropdown");
+    const musterList = document.getElementById("musterList");
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    let patternToDelete = null; // store the <li> to delete
+
+    const url = '@Url.Action("GetPatternsByBrand", "Assembly")';
+    const deleteUrl = '@Url.Action("DeletePattern", "Assembly")'; // server endpoint to delete
+
+    // Load patterns on brand change
+    dropdown.addEventListener("change", function () {
+        let brand = this.value;
+        if (brand === "") {
+            musterList.innerHTML = "";
+            return;
+        }
+
+        fetch(`${url}?brand=${brand}`)
+            .then(response => response.json())
+            .then(data => {
+                musterList.innerHTML = "";
+                if (data.length === 0) {
+                    musterList.innerHTML = `<li class="list-group-item">Keine Muster gefunden</li>`;
+                    return;
+                }
+                // Heading once
+                musterList.innerHTML = `
+                <li class="list-group-item bg-light fw-bold">
+                    <div class="row">
+                        <div class="col">Marke</div>
+                        <div class="col">Logik</div>
+                        <div class="col-auto"></div>
+                    </div>
+                </li>
+            `;
+
+                // Rows
+                data.forEach(item => {
+                    let li = document.createElement("li");
+                    li.className = "list-group-item";
+
+                    li.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col"><strong>${brand}</strong></div>
+                        <div class="col"><strong>${item.Pattern}</strong></div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm text-danger delete-btn" data-id="${item.ID}">
+                                <i class="bi bi-trash" style="font-size:20px"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                    musterList.appendChild(li);
+                });
+            });
+    });
+
+    // Open modal on trash click
+    musterList.addEventListener("click", function (e) {
+        const deleteBtn = e.target.closest(".delete-btn");
+        if (!deleteBtn) return;
+
+        // store reference to <li> so we can remove later
+        patternToDelete = deleteBtn.closest("li");
+
+        // store ID from the delete button
+        patternToDelete.patternId = deleteBtn.dataset.id;
+
+        deleteModal.show();
+    });
+
+    // Confirm delete
+    document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+        debugger;
+        if (!patternToDelete) return;
+
+        let patternId = patternToDelete.patternId; // get ID from button
+
+        fetch(deleteUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: patternId })
+        })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    // Extract brand from row BEFORE removing it
+                    const brand = patternToDelete.querySelector(".col strong").textContent.trim();
+
+                    // remove row from UI
+                    patternToDelete.remove();
+
+                    // Count remaining rows (exclude heading)
+                    const remainingRows = musterList.querySelectorAll("li:not(.bg-light)").length;
+
+                    if (remainingRows === 0) {
+                        // Remove brand from dropdown
+                        const opt = dropdown.querySelector(`option[value="${brand}"]`);
+                        if (opt) opt.remove();
+
+                        // Clear UI
+                        dropdown.value = "";
+                        musterList.innerHTML = "";
+                    }
+                    else {
+                        // Reload list using brand EVEN IF dropdown is empty
+                        loadPatterns(brand);
+                    }
+                } else {
+                    alert("Fehler beim Löschen.");
+                }
+                deleteModal.hide();
+                patternToDelete = null;
+            });
+    });
+          });
+
+          function loadPatterns(brand) {
+    if (!brand) return;
+
+    const musterList = document.getElementById("musterList");
+    const url = '@Url.Action("GetPatternsByBrand", "Assembly")';
+
+    fetch(`${url}?brand=${brand}`)
+        .then(r => r.json())
+        .then(data => {
+            musterList.innerHTML = "";
+
+            if (data.length === 0) {
+                musterList.innerHTML = `<li class="list-group-item">Keine Muster gefunden</li>`;
+                return;
+            }
+
+            // Heading
+            musterList.innerHTML = `
+                <li class="list-group-item bg-light fw-bold">
+                    <div class="row">
+                        <div class="col">Marke</div>
+                        <div class="col">Logik</div>
+                        <div class="col-auto"></div>
+                    </div>
+                </li>
+            `;
+
+            // Rows
+            data.forEach(item => {
+                let li = document.createElement("li");
+                li.className = "list-group-item";
+
+                li.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col"><strong>${brand}</strong></div>
+                        <div class="col"><strong>${item.Pattern}</strong></div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm text-danger delete-btn" data-id="${item.ID}">
+                                <i class="bi bi-trash" style="font-size:20px"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                musterList.appendChild(li);
+            });
+        });
+}
+
+
+
+
+    </script>
+
+
+
+</head>
+<!-- First-Time Password Modal -->
+
+
+<body>
+
+    <div class="container-fluid">
+
+
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    @if (ViewBag.Flow != null && ViewBag.Flow == "Standard, Feste Auspacker & Montage")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "Direktmontage, Nur Monteure")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("DirektMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="DirektMontage">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "FlexModell, Flexible Auspacker & Monteur")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                                <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                        <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>*@
+                        <div class="">
+                            <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="BikePassLog">
+                                    <i class="bi bi-archive unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    }
+
+                    <!-- Push the following block to the bottom -->
+                    <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                        <div class="register-button">
+                            <form action="@Url.Action("Register", "Account")">
+                                <button type="submit" class="register-button" title="Register Neu">
+                                    <i class="bi bi-person-add"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Branches">
+                                    <i class="bi bi-card-list unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="circle-button">
+                            <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Rahmennummer">
+                                    <i class="bi bi-code unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="circle-button">
+                            <form action="@Url.Action("Logout", "Account")" method="post">
+                                @*@Html.AntiForgeryToken()*@
+                                <button type="submit" class="logout-button" title="Logout">
+                                    @ViewBag.UserName
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-11 table-container">
+                <div class="mt-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Rahmennummer</h3>
+
+                        <!-- ⭐ TOP RIGHT: Branch Name -->
+                        <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                            <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                        </h4>
+
+                    </div>
+                </div>
+                <div class="container m-0 p-0">
+                    <div class="p-4 bg-white shadow-sm rounded-3">
+
+
+
+                        <!-- Search + Brands -->
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Suche</label>
+                                <input id="brandSearch"
+                                       type="text"
+                                       class="form-control form-control-lg"
+                                       placeholder="Cube, Bianchi..." />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Brands</label>
+                                <select id="brandDropdown" class="form-select form-select-lg">
+                                    <option value="">Bitte Marke auswählen</option>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <option value="@item.BrandDesignation">@item.BrandDesignation</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Muster Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold mb-0">Muster</h5>
+                            <button id="addPatternBtn" class="btn btn-outline-dark btn-sm fw-bold">+</button>
+                        </div>
+
+                        <ul id="musterList" class="list-group" style="max-height: 50vh; overflow-y: auto;">
+                            <!-- JS will fill this -->
+                        </ul>
+
+                    </div>
+                </div>
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Muster löschen</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Sind Sie sicher, dass Sie dieses Muster löschen möchten?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Löschen</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                @if (TempData["AlertMessage"] != null)
+                {
+                    <script type="text/javascript">
+                   alert('@TempData["AlertMessage"]');
+                    </script>
+                }
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <!-- First-Time Password Modal -->
+    <div class="modal fade" id="pagePasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Zugangsschutz</h5>
+                </div>
+
+                <div class="modal-body">
+                    <label class="form-label fw-semibold">Passwort eingeben</label>
+                    <input id="pagePasswordInput" type="password" class="form-control" placeholder="Passwort...">
+                    <small id="passwordError" class="text-danger mt-2 d-none">Falsches Passwort!</small>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="submitPagePassword" class="btn btn-dark w-100">Weiter</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

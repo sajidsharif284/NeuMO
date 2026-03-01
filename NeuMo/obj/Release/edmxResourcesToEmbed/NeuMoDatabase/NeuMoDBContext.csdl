@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="NeuMoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="NeuMoEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="tbl_StorageGrid" EntityType="NeuMoModel.tbl_StorageGrid" />
+    <EntitySet Name="tbl_FrameNumberPattern" EntityType="NeuMoModel.tbl_FrameNumberPattern" />
+    <EntitySet Name="tbl_BikePlacements" EntityType="NeuMoModel.tbl_BikePlacements" />
+    <EntitySet Name="tbl_Branches" EntityType="NeuMoModel.tbl_Branches" />
+    <EntitySet Name="Users" EntityType="NeuMoModel.Users" />
+    <EntitySet Name="tbl_Company" EntityType="NeuMoModel.tbl_Company" />
+    <EntitySet Name="tbl_BikePassPrint_Log" EntityType="NeuMoModel.tbl_BikePassPrint_Log" />
+    <EntitySet Name="vw_NeumoProductDetails" EntityType="NeuMoModel.vw_NeumoProductDetails" />
+    <EntitySet Name="tbl_BrandExtension" EntityType="NeuMoModel.tbl_BrandExtension" />
+  </EntityContainer>
+  <EntityType Name="tbl_StorageGrid">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BoxName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tbl_FrameNumberPattern">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" />
+    <Property Name="BrandDesignation" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Pattern" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tbl_BikePlacements">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BoxName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="IsOccupied" Type="Boolean" Nullable="false" />
+    <Property Name="IsPriority" Type="Boolean" Nullable="false" />
+    <Property Name="Location" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="AssemblerID" Type="Int32" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="BikeID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="AssembleStartTime" Type="DateTime" Precision="3" />
+    <Property Name="AssembleEndTime" Type="DateTime" Precision="3" />
+    <Property Name="IsDifficult" Type="Boolean" />
+    <Property Name="KeyNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UnPackerID" Type="Int32" />
+    <Property Name="FrameNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="IsEbike" Type="Boolean" />
+    <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Barcode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Mechaniker" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tbl_Branches">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CompanyId" Type="Int32" Nullable="false" />
+    <Property Name="BranchName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Boolean" />
+    <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="FlowType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+    <Property Name="IsUnpacker" Type="Boolean" />
+    <Property Name="IsMechanic" Type="Boolean" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="BranchName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="EmployeeNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="BikepassPrinter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="LabelPrinter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tbl_Company">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tbl_BikePassPrint_Log">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="SerialNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Barcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Frame_Num" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="BranchName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Monteur" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="AccesoryBag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="BatteryNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="KeyNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ForkNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Mechaniker" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Brand" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="vw_NeumoProductDetails">
+    <Key>
+      <PropertyRef Name="Company" />
+      <PropertyRef Name="No_" />
+      <PropertyRef Name="Description" />
+      <PropertyRef Name="Target_Group" />
+      <PropertyRef Name="Brand" />
+      <PropertyRef Name="Frame_Height" />
+      <PropertyRef Name="Frame_Type" />
+      <PropertyRef Name="Wheel_Size" />
+      <PropertyRef Name="Gearshift" />
+      <PropertyRef Name="Frame_Material" />
+      <PropertyRef Name="Description_2" />
+      <PropertyRef Name="Description_3" />
+      <PropertyRef Name="ERFA_No_" />
+      <PropertyRef Name="Blocked" />
+      <PropertyRef Name="E_Bike_Engine" />
+      <PropertyRef Name="Leistung" />
+      <PropertyRef Name="Unit_Cost" />
+      <PropertyRef Name="Unit_Price" />
+      <PropertyRef Name="Model_Year" />
+      <PropertyRef Name="Bar_Code" />
+      <PropertyRef Name="EAN" />
+    </Key>
+    <Property Name="Company" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="No_" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Target_Group" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Brand" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Colour" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ColourForName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Frame_Height" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Frame_Type" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Wheel_Size" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Gearshift" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Frame_Material" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Description_2" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Description_3" Type="String" Nullable="false" MaxLength="65" FixedLength="false" Unicode="false" />
+    <Property Name="ERFA_No_" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Item_Category_Code" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Blocked" Type="Byte" Nullable="false" />
+    <Property Name="E_Bike_Engine" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Leistung" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Unit_Cost" Type="Decimal" Nullable="false" Precision="38" Scale="20" />
+    <Property Name="Unit_Price" Type="Decimal" Nullable="false" Precision="38" Scale="20" />
+    <Property Name="Model_Year" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Bar_Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="EAN" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="isebike" Type="Boolean" />
+    <Property Name="E_Bike_Engine_Beschreibung" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="tbl_BrandExtension">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+</Schema>

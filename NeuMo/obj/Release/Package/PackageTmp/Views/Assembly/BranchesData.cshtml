@@ -1,0 +1,510 @@
+﻿@model IEnumerable<NeuMo.Controllers.AssemblyController.BranchViewModel>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>BranchesData</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <style>
+    body {
+        background-image: url('@Url.Content("~/content/images/loginbg.jpg")');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100vh;
+    }
+
+    .custom-sidebar {
+        width: 50px;
+        background-color: white;
+        border-radius: 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        height: 80vh;
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-logo {
+        font-weight: bold;
+        font-size: 18px;
+        color: #e1005a;
+        margin-bottom: 1rem;
+    }
+
+    .icon {
+        font-size: 22px;
+        color: #eaa;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+    .unPackerIcon {
+        font-size: 22px;
+        color: red;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+
+    .circle-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fdd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: red;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+
+    .register-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 10px 0;
+        text-decoration: none;
+    }
+
+
+    .logout-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #e1005a;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .custom-table-wrapper {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background: white;
+    }
+
+        /* Sticky header styling */
+        .custom-table-wrapper thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+            z-index: 2;
+        }
+
+        /* Optional scroll styling */
+        .custom-table-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-table-wrapper::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+
+
+
+
+    .form-check {
+        margin-top: 15px; /* spacing for checkbox */
+    }
+
+    button.btn {
+        margin-top: 15px; /* spacing for button */
+    }
+        #flowTypeModal .modal-dialog {
+            max-width: 1000px;
+        }
+
+        .flow-option {
+            min-width: 250px; /* ensures bigger boxes */
+        }
+    </style>
+
+    <script type="text/javascript">
+        let selectedFlowType = null;
+
+        // Open modal
+        $(document).on("click", ".editFlowTypeBtn", function () {
+            debugger;
+            const branchId = $(this).data("id");
+            const branchName = $(this).data("name");
+
+            $("#branchId").val(branchId);
+            $("#branchTitle").text(`Arbeitsstationen für ${branchName}`);
+
+            // Clear previous selection
+            $(".flow-option").removeClass("border-danger");
+            selectedFlowType = null;
+
+            // Fetch current flow type from server
+            $.get('@Url.Action("GetBranch", "Assembly")', { id: branchId }, function (branch) {
+                if (branch.FlowType) {
+                    debugger;
+                    selectedFlowType = branch.FlowType;
+
+                    // Highlight the saved one
+                    $(`.flow-option[data-value='${branch.FlowType}']`).addClass("border-danger");
+                }
+
+                // Set email field
+                if (branch.Email) {
+                    $("#branchEmail").val(branch.Email);
+                }
+
+                // Show modal AFTER setting selection
+                $("#flowTypeModal").modal("show");
+            });
+        });
+
+        // Select flow type manually
+        $(document).on("click", ".flow-option", function () {
+            debugger;
+            $(".flow-option").removeClass("border-danger");
+            $(this).addClass("border-danger");
+            selectedFlowType = $(this).data("value");
+        });
+
+        // Save flow type
+        $(document).on("click", "#saveFlowType", function (e) {
+            debugger;
+            const branchId = $("#branchId").val();
+            const email = $("#branchEmail").val();
+
+            if (!branchId) {
+                alert("Branch ID is missing.");
+                return;
+            }
+
+            if (!selectedFlowType) {
+                alert("Please select a flow type.");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("UpdateFlowType", "Assembly")',
+                type: "POST",
+                data: { id: branchId, flowType: selectedFlowType, email: email },
+                success: function (res) {
+                    if (res.success) {
+                        $("#flowTypeModal").modal("hide");
+                        location.reload();
+                    } else {
+                        alert(res.message || "Something went wrong.");
+                    }
+                },
+                error: function () {
+                    alert("Error occurred while saving flow type.");
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            debugger;
+            const companyFilter = document.getElementById("companyFilter");
+            const branchFilter = document.getElementById("branchFilter");
+
+            function normalize(value) {
+                return (value || "").toLowerCase().trim();
+            }
+
+            function filterTable() {
+                debugger;
+                const selectedCompany = normalize(companyFilter.value);
+                const selectedBranch = normalize(branchFilter.value);
+
+                const rows = document.querySelectorAll(".custom-table-wrapper tbody tr");
+
+                rows.forEach(row => {
+                    debugger;
+                    const rowCompany = normalize(row.getAttribute("data-company"));
+                    const rowBranch = normalize(row.getAttribute("data-branch"));
+
+                    const matchesCompany = !selectedCompany || rowCompany === selectedCompany;
+                    const matchesBranch = !selectedBranch || rowBranch === selectedBranch;
+
+                    row.style.display = (matchesCompany && matchesBranch) ? "" : "none";
+                });
+            }
+
+            companyFilter.addEventListener("change", filterTable);
+            branchFilter.addEventListener("change", filterTable);
+        });
+    </script>
+
+
+</head>
+<body>
+
+    <div class="container-fluid">
+
+
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="custom-sidebar d-flex flex-column align-items-center py-3">
+                    <div class="sidebar-logo" title="XXL Startseite">XXL</div>
+
+                    @if (ViewBag.Flow != null && ViewBag.Flow == "Standard, Feste Auspacker & Montage")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("UnPackingAssign", "UnPacking")" method="post">
+                                <button type="submit" class="logout-button" title="Unpacking">
+                                    <i class="bi bi-box unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="">
+                            <form action="@Url.Action("FahrradMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "Direktmontage, Nur Monteure")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("DirektMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="DirektMontage">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (ViewBag.Flow != null && ViewBag.Flow == "FlexModell, Flexible Auspacker & Monteur")
+                    {
+                        <div class="">
+                            <form action="@Url.Action("FlexMontage", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Assembly">
+                                    <i class="bi bi-bicycle unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin == true)
+                    {
+
+                        <div class="">
+                            <form action="@Url.Action("Reporting", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="Reporting">
+                                    <i class="bi bi-grid unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @*<div class="">
+                                <form action="@Url.Action("FahrradPassRePrint", "Assembly")" method="post">
+                                    <button type="submit" class="logout-button" title="FahrradPass Drucken">
+                                        <i class="bi bi-qr-code-scan unPackerIcon"></i>
+                                    </button>
+                                </form>
+                            </div>*@
+                        <div class="">
+                            <form action="@Url.Action("BikePassLog", "Assembly")" method="post">
+                                <button type="submit" class="logout-button" title="BikePassLog">
+                                    <i class="bi bi-archive unPackerIcon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    }
+
+                    <!-- Push the following block to the bottom -->
+                <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                    <div class="register-button">
+                        <form action="@Url.Action("Register", "Account")">
+                            <button type="submit" class="register-button" title="Register Neu">
+                                <i class="bi bi-person-add"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="circle-button">
+                        <form action="@Url.Action("BranchesData", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="Branches">
+                                <i class="bi bi-card-list unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="">
+                        <form action="@Url.Action("Rahmennummer", "Assembly")" method="post">
+                            <button type="submit" class="logout-button" title="Rahmennummer">
+                                <i class="bi bi-code unPackerIcon"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="circle-button">
+                        <form action="@Url.Action("Logout", "Account")" method="post">
+                            @*@Html.AntiForgeryToken()*@
+                            <button type="submit" class="logout-button" title="Logout">
+                                @ViewBag.UserName
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-md-11 table-container">
+                <div class="mt-5">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Firmen-Informationen</h3>
+
+                        <!-- ⭐ TOP RIGHT: Branch Name -->
+                        <h4 class="text-end" style="font-weight:700; font-size:26px;">
+                            <span style="color:#e1005a;">Emporon</span> @ViewBag.BranchName
+                        </h4>
+
+                    </div>
+                    <div class="mt-4">
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="companyFilter">
+                                    <option value="">Firma</option>
+                                    @foreach (var company in ViewBag.Companies as SelectList)
+                                    {
+                                        <option value="@company.Text">@company.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="branchFilter">
+                                    <option value="">Filale</option>
+                                    @foreach (var branch in ViewBag.Branches as SelectList)
+                                    {
+                                        <option value="@branch.Text">@branch.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <!-- User Table -->
+                <!-- Scrollable Table with Sticky Header -->
+                <div class="custom-table-wrapper">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Firma</th>
+                                <th>
+                                    Filiale
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Active)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Email)
+                                </th>
+                                <th>
+                                    Arbeitsstationen
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-company="@item.CompanyName" data-branch="@item.BranchName">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CompanyName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BranchName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Active)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FlowType)
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary editFlowTypeBtn"
+                                                data-id="@item.ID" data-name="@item.BranchName">
+                                            Arbeitsstationen bearbeiten
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal fade" id="flowTypeModal" tabindex="-1" aria-labelledby="flowTypeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content p-4">
+                            <h4 class="mb-3" id="branchTitle"></h4>
+                            <input type="hidden" id="branchId" />
+
+                            <div class="d-flex gap-3 mb-5">
+                                <div class="flow-option border p-3 flex-fill text-center" data-value="Standard, Feste Auspacker & Montage">
+                                    <h5>Standard, Feste Auspacker & Montage</h5>
+                                    <p>Getrennte Startbildschirme für Auspacker und Monteure. Feste Rollen je Station.</p>
+                                </div>
+                                <div class="flow-option border p-3 flex-fill text-center" data-value="FlexModell, Flexible Auspacker & Monteur">
+                                    <h5>FlexModell, Flexible Auspacker & Monteur</h5>
+                                    <p>Ein Startscreen für alle: Rollen sind dynamisch, jede Person kann beide Einstiege nutzen.</p>
+                                </div>
+                                <div class="flow-option border p-3 flex-fill text-center" data-value="Direktmontage, Nur Monteure">
+                                    <h5>Direktmontage, Nur Monteure</h5>
+                                    <p>Für Filialen, in denen Monteure selbst auspacken und kein Regal/ Trennung zwischen Auspacker und Monteur geführt wird.</p>
+                                </div>
+                            </div>
+                            <!-- Email Input -->
+                            <div class="mb-3">
+                                <div class="col-md-6">
+                                    <label for="branchEmail" class="form-label">Email</label>
+                                    <input type="email" id="branchEmail" class="form-control" />
+                                </div>
+
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-primary" id="saveFlowType">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                @if (TempData["AlertMessage"] != null)
+                {
+                    <script type="text/javascript">
+                   alert('@TempData["AlertMessage"]');
+                    </script>
+                }
+            </div>
+
+
+
+
+        </div>
+    </div>
+</body>
+</html>
